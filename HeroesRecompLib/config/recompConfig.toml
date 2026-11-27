@@ -1,0 +1,163 @@
+[main]
+file_path = "../private/default.xbe"
+out_directory_path = "../x86"
+
+[optimizations]
+enable = true                    # master toggle
+eliminate_return_slot = true     # don't put return addresses on the stack where possible
+eliminate_stack_args = true      # optimise away push+pop across function calls
+trust_callee_returns = true      # trust `ret N` to restore ESP in functions we can't fully follow
+optimize_x87 = true              # speed up x87 code
+optimize_mmx = true              # keep MMX registers in a local array so clang can optimise them
+eliminate_dead_x87_status = true # skip x87 C0-C3 writes that nothing reads
+eliminate_dead_flags = true      # compute only flags later instructions read
+fuse_compare_branch = true       # turn cmp + jump into a plain `if (a < b)`
+find_ebp_frames = true           # find functions using EBP as frame pointer (more `nonvolatile_stack`)
+idiv32_after_cdq = true          # use a 32-bit divide for `idiv` after `cdq`
+find_string_direction = true     # skip the direction flag check in `rep movs` and co.
+
+# Hacks that sacrifice accuracy for speed. Usually safe.
+[speed_hacks]
+enable = false # master toggle. Heroes: off until the game is verified (AGENTS.md)
+
+# Let the compiler keep stack values in registers.
+# Side effect: Unsafe if another thread could read your thread's stack.
+#              But this has practically 0% chance of happening.
+nonvolatile_stack = true
+
+# Keep leaf functions' stack slots in C++ locals.
+# Side effect: Stack memory below ESP differs from real hardware after a return.
+stack_slots_in_locals = true
+
+# CMOV only reads memory when it actually moves.
+# Side effect: Invalid addresses are skipped.
+#              Stops game from crashing where real HW might have crashed.
+lazy_cmov_load = true
+
+# Use native word size for guest addresses.
+# e.g. in `[esi+0x10]` treat 'esi' as `64-bit` on 64-bit systems.
+# Side effect: Usually safe to use, just beware this will break 32-bit wraps.
+#              (e.g. `[eax-4]` with `eax = 0`) would underflow and produce wrong result.
+#              Xbox compiler would never emit this though.
+#
+#              (On Xbox, that's kernel space, you can't read it!)
+#
+# Edge case:
+#              In SUPER RARE cases we can have something like `[eax+0x462E08]`.
+#              Where eax is NEGATIVE. That's bad, and is an overflow.
+#              We therefore limit offsets to 0x10000 (Xbox base address - chosen arbitrarily).
+native_sized_addresses = true
+
+# Run `rep movs` and `rep stos` as memmove and memset.
+# Needs native_sized_addresses.
+# Side effect: Other threads may see the copied bytes in any order.
+#              Real x86 allows this too, so games shouldn't rely on it.
+rep_memmove_memset = true
+
+# Assume calls never pass results in eflags.
+# Side effect: Breaks hand-written asm that does this. (Compilers never do this.)
+#              Only affects calls we can't trace, e.g. indirect calls/callbacks etc.
+#              Other calls we do trace correctly.
+clobber_eflags_for_unknown_code = true
+
+# Let the compiler merge or drop packed SSE loads and stores.
+# Side effect: Loads whose result is never used are skipped.
+#              So like CMOV, a guest crash is avoided when it should happen.
+plain_sse_memory = true
+
+# Let the compiler merge/drop guest loads and stores outside the stack.
+# Side effect: Unsafe if a host thread writes memory that the guest code
+#              reads without/lock or wait loop. (Concurrency)
+nonvolatile_memory = true
+
+# 64-bit instead of 80-bit x87 trig and 2^x.
+# Side effect: Results can differ in the last few bits (tiny accuracy difference).
+fast_trig = true
+
+# Don't track x87 overflow, divide-by-zero and precision-loss flags.
+# Side effect: Games almost never read these.
+fast_x87_status = true
+
+# Don't check for x87 stack overflow and underflow.
+# Side effect: Only buggy code over- or underflows the stack, and it goes unnoticed.
+fast_x87_stack = true
+
+# Treat an `ffree` that frees the deepest x87 value as a pop.
+# Side effect: The x87 `top` field can differ from real hardware until the next reset.
+#              Only code reading the raw status word or saved FPU state would notice.
+fast_x87_ffree = true
+
+# Unlock spin locks with a regular store instead of a locked `xchg`.
+# Only in functions that also lock with `xchg`.
+# Side effect: Other threads see the unlock slightly later.
+#              Unsafe if another thread swaps the same value.
+plain_lock_release = true
+
+# Skip the locked `xchg` at or above this address. 0 turns it off.
+# 0x16A1000 is the heap start (HEAP_BEGIN in kernel/heap.cpp).
+# Side effect: Assumes only one thread uses each heap lock.
+#              True in every stage, event and menu tested.
+#              If not, a ref count can break: crash or leak.
+single_thread_locks_from = 0 # Heroes: Shadow's value (0x16A1000) was Shadow's heap start; find Heroes' before enabling
+
+# Debug check for `single_thread_locks_from`.
+# Logs on error.
+# Logs to stderr and `x86_lock_check.log` when two threads use one lock.
+#   "AT THE SAME TIME": the hack breaks this lock.
+#   "at different times": may just be reused heap memory.
+check_single_thread_locks = false
+
+# FSCALE uses a double-only path.
+# Side effect: Huge scales (beyond 2^±1022) give wrong results. Only math library error paths use them.
+fast_fscale = true
+
+# Don't track SSE exception flags.
+# Side effect: Games almost never read these.
+fast_sse_status = true
+
+# Extra hints for the optimisation passes.
+# Danger: Only add if you know what you're doing. (can read ASM)
+#
+# - Missing hints only cost speed
+# - Wrong hints break the game.
+[optimization_hints]
+
+x87_stack_effects = [
+	# Heroes: none yet. Shadow had __security_check_cookie at 0x37E1A5.
+]
+
+# Info about x87 stack upon entering a function.
+#
+# Almost all x87 code on OG Xbox enters functions with empty x87 stack,
+# as MSVC passes parameters either via stack (usual), or registers.
+#
+# But in very rare cases, parameters are passed via the x87 stack; such as
+# in CRT code.
+#
+# Sometimes in this code, we can't analyse it fully due to instructions
+# we forbid in analysis like FFREE/FXRSTOR; or other limitations.
+#
+# This allows you to set overrides.
+
+[fixes]
+# Heroes: all lists start empty. Shadow's entries are in config/shadow/recompConfig.toml for reference;
+# never copy an address from there without finding the matching function in Heroes first.
+#
+# function_hooks: addresses replaced with X86_OVERRIDE_FUNC / GUEST_FUNCTION_HOOK / GUEST_FUNCTION_STUB.
+# Add its guest address here and regenerate, or compilation will fail. Example: for sub_12345, add 0x12345.
+function_hooks = [
+]
+
+# functions: functions discovery missed, as { address = 0x..., size = 0x... }.
+functions = [
+]
+
+# banned_addresses: ranges not to recompile.
+banned_addresses = [
+]
+
+# invalid_instructions: bytes inside code that are data.
+invalid_instructions = [
+]
+
+# [[switch]] and [[midasm_hook]] entries go below.

@@ -28,10 +28,10 @@ if (WIN32)
 endif()
 
 
-add_subdirectory("${SHADOW_RECOMP_THIRDPARTY_ROOT}/msdf-atlas-gen")
+add_subdirectory("${HEROES_RECOMP_THIRDPARTY_ROOT}/msdf-atlas-gen")
 
-add_subdirectory("${SHADOW_RECOMP_THIRDPARTY_ROOT}/discord-rpc")
-add_subdirectory("${SHADOW_RECOMP_THIRDPARTY_ROOT}/o1heap")
-add_subdirectory("${SHADOW_RECOMP_THIRDPARTY_ROOT}/SDL")
-add_subdirectory("${SHADOW_RECOMP_THIRDPARTY_ROOT}/SDL_mixer")
-add_subdirectory("${SHADOW_RECOMP_THIRDPARTY_ROOT}/plume")
+add_subdirectory("${HEROES_RECOMP_THIRDPARTY_ROOT}/discord-rpc")
+add_subdirectory("${HEROES_RECOMP_THIRDPARTY_ROOT}/o1heap")
+add_subdirectory("${HEROES_RECOMP_THIRDPARTY_ROOT}/SDL")
+add_subdirectory("${HEROES_RECOMP_THIRDPARTY_ROOT}/SDL_mixer")
+add_subdirectory("${HEROES_RECOMP_THIRDPARTY_ROOT}/plume")

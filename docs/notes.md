@@ -66,14 +66,14 @@ XBOXKRNL  1.0.5659  qfe 1     LIBCMT    1.0.5659  qfe 1     D3DX8     1.0.5659  
 XGRAPHC   1.0.5659  qfe 1
 ```
 - XboxRecomp2 writes the D3D8 build into `x86_config.h` as `X86_CODE_D3D8V`. `HeroesRecomp/gpu/renderstate.cpp` (a CXBX-Reloaded table) uses it to pick the render-state layout. 5659 is a well-known build in CXBX's tables, so the layout should be right, but verify it once rendering starts.
-- **Open question:** which XDK build does Shadow (2005) use? If it differs, any D3D/DSOUND code the host matches by address or layout (pushbuffer, `patches/*`) may differ too.
+- **Shadow uses XDK 5849** (see the comparison below), so the SDK code differs between the two games.
 
 ### Kernel imports
 Heroes imports **116** kernel exports. It has no non-kernel import directory.
 - **94** are already implemented in the host: `GUEST_FUNCTION_HOOK*(__imp__Name, ...)` in `HeroesRecomp/kernel/imports.cpp` and others. The host implements 98 in total.
 - **22** are not. XboxRecomp2 (`xbe/kernel/mod.rs`) classes them as:
   - **14 data exports** (variables, keys and objects, not functions): `ExEventObjectType`, `HalBootSMCVideoMode`, `HalDiskCachePartitionCount`, `IdexChannelObject`, `KeTickCount`, `LaunchDataPage`, `PsThreadObjectType`, `XboxAlternateSignatureKeys`, `XboxHDKey`, `XboxHardwareInfo`, `XboxKrnlVersion`, `XboxSignatureKey`, `XeImageFileName`, `XePublicKeyData`.
-    - Shadow handles at least `KeTickCount` differently: `HeroesRecomp/misc_impl.cpp` hooks a Shadow function `sub_388458` that reads it. Find how the host serves data exports before Phase 2.
+    - Shadow imports most of these too, and they aren't `GUEST_FUNCTION_*` registrations, so XboxRecomp2/the host handle data exports some other way. Confirm for the ones only Heroes uses.
   - **8 functions:** `HalIsResetOrShutdownPending`, `IoCreateDevice`, `IoInvalidDeviceRequest`, `IoMarkIrpMustComplete`, `IoStartNextPacket`, `IoStartPacket`, `IofCompleteRequest`, `XcVerifyPKCS1Signature`.
     - The `Io*` set is the device-driver API, probably used by XAPI's statically linked memory unit/USB driver. `XcVerifyPKCS1Signature` is probably for save-signature checks? Find out which are actually called at runtime before implementing them; stub them so they log once.
 
@@ -91,3 +91,48 @@ Config: `HeroesRecompLib/private/heroes_min.toml`. It has Shadow's generic `[opt
   - about 3,600 unresolved calls/jumps
   - a few `DecodeFailed`/`OverlappingInstruction` stops, where data was read as code
 - **Next:** only 2,417 functions were reached from known entry points. Most Heroes code is reached through function pointers (vtables, object tables), so discovery leans on brute force. Shadow's config has many `[fixes] functions` entries for the same reason. A missing function shows up at runtime as `UNKNOWN FUNCTION REACHED`.
+
+## 2026-11-27: How ShadowRecomp's host depends on Shadow's binary
+
+The "generic" host is not generic. It hooks **Shadow's** XDK and engine functions by address:
+- `sub_3E5A27` = `DirectSoundCreate` in Shadow's XBE
+- `sub_3DDAB0` = D3D `CreateDevice`
+- file I/O, heap, textures, vertex buffers, shaders and so on
+
+Everything goes through `X86_OVERRIDE_FUNC(sub_X)`, `GUEST_FUNCTION_HOOK*(sub_X, ...)` and `[[midasm_hook]]` entries.
+
+### Reference binary
+Shadow's `default.xbe`, from the owner's Xbox ISO, is in `HeroesRecompLib/private/shadow_default.xbe` (gitignored).
+- 5,447,680 bytes, SHA-1 `7e63ee47ec4e37c3104d4f5fec9bde37e9cf1aa3`
+- Title ID `0x53450086`, version 9
+- This is the build ShadowRecomp targets: `0x3E5A27`, `0x3E419C` and `0x3DDAB0` are each the exact start of a function. The byte before is a `ret`/padding, and the function opens with `push ebp; mov ebp, esp`.
+- **XDK 5849** (D3D8 qfe 15, DSOUND qfe 11), vs. Heroes' 5659. SDK functions changed between the two builds, so matching Shadow → Heroes must allow small differences, and some functions will need manual checks.
+
+### What depends on Shadow addresses
+| Where | Count | What | Plan |
+|---|---|---|---|
+| `patches/*.cpp` | 470 overrides + 378 of 387 midasm hooks | Shadow gameplay fixes and features | **Excluded from the build** (2026-11-27). Kept as reference. |
+| core host: `gpu/` (~70), `audio/audio.cpp` (32), `misc_impl.cpp` (22), `kernel/io/file_system.cpp` (16), `mod/mod_loader.cpp` (12), `kernel/heap.cpp` (8), `os/gamelogs.cpp` (8), `app.cpp` (6), `input/` (3), ... | about 210 | XDK replacements (DirectSound, D3D, file I/O, heap) and engine glue | Must be **re-pointed at Heroes' addresses**. Next: a Shadow → Heroes function-matching tool. |
+| Shadow-only features: achievements, Discord RPC (`misc/rich_presence/shadow/`), multiplayer HUD | | read Shadow game state | Disable. |
+
+### Safety: what fails loudly and what doesn't
+- **Loud (safe):** `X86_OVERRIDE_FUNC(sub_X)` has a `static_assert` requiring `sub_X` in `[fixes].function_hooks`. With Heroes' empty list, every leftover Shadow override is a compile error. Calls to Shadow addresses that don't exist in Heroes are link errors (169 of 175 referenced addresses).
+- **Silent (dangerous):** these compile fine and would corrupt or misread Heroes at runtime. Every one must be guarded or ported before the game runs:
+  - **Direct call that lands on a real Heroes function:** `exports.cpp:46` calls `sub_25BF80`, Shadow's "play sound effect" (thiscall on `IsndSeInstance`). Heroes has an unrelated function at `0x25BF80`.
+    - The other 5 address collisions (`sub_11430`, `sub_1B2C30`, `sub_1F360`, `sub_25CBB0`, `sub_2AAC20`) are overrides, so the `static_assert` catches them.
+  - **Fixed guest memory addresses.** All of them fall inside Heroes' `.data` (`0x3DC600`–`0x748060`).
+    - **Writes:**
+      - `app.cpp`: frame time `0x541FA8`, written **every frame**; voice language `0x54DD8C`
+      - `audio/audio.cpp`: `0x54DD8C`, `0x51DD80`, plus calls to `sub_328BB0`
+      - `user/config.cpp`: `0x54DD88`, `0x541504`
+      - `input/input.cpp`: controller ports `0x559984 + 4*i`
+    - **Reads:**
+      - `app.cpp`: game mode `0x5022A4`
+      - `gpu/pushbuffer.cpp`: a color at `0x55B3C0..CC`
+      - `gpu/vertexbuffer.cpp`: `0x55F8F0`
+      - `mod/mod_loader.cpp`: `0x54DD8C`
+      - `ui/options_menu.cpp` and `ui/multiplayer_hud.cpp`: HUD state `0x54DE78` and more
+      - `user/achievement_manager.cpp`
+      - `misc/rich_presence/shadow/shadow.cpp`
+  - Find these again with:
+    `git grep -n -E 'X86_(LOAD|STORE)_[A-Z0-9]+\(0x|GuestVariable|GuestToHostFunction<.*sub_' -- HeroesRecomp ':!HeroesRecomp/patches'`
