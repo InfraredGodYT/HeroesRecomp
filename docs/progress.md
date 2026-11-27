@@ -17,6 +17,11 @@ Kinds:
 - **memory:** a fixed Shadow data address. **Always silent**: it reads or writes Heroes memory. Must be ported or guarded before the game runs.
 - **import:** a kernel function Shadow imports but Heroes doesn't. Leave it out for Heroes.
 
+**Matches:** `docs/shadow-matches.md` (2026-11-27) has the Heroes address for each row.
+- 94 HIGH: 89 overrides and 5 calls.
+- 62 overrides, 12 calls, 9 midasm hooks and 35 memory addresses need a manual check or have no counterpart.
+- Port HIGH rows first. For CHECK rows, confirm in Ghidra first.
+
 Disabled entirely (not in the build): `patches/*.cpp`, which is Shadow gameplay. Reference config: `HeroesRecompLib/config/shadow/recompConfig.toml`.
 
 | File | Line | Kind | Shadow address | Name / hint | Risk |

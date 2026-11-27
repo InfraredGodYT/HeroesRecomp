@@ -136,3 +136,17 @@ Shadow's `default.xbe`, from the owner's Xbox ISO, is in `HeroesRecompLib/privat
       - `misc/rich_presence/shadow/shadow.cpp`
   - Find these again with:
     `git grep -n -E 'X86_(LOAD|STORE)_[A-Z0-9]+\(0x|GuestVariable|GuestToHostFunction<.*sub_' -- HeroesRecomp ':!HeroesRecomp/patches'`
+
+## 2026-11-27: Matching Shadow functions to Heroes
+
+Tool: `tools/xbe_tools/match_shadow.py` writes `docs/shadow-matches.md`. It has no disassembler and uses no new dependency. It masks call/jump distances and in-image addresses, then compares bytes.
+- **2,547 functions** are identical and unique in both games. Call-target matching adds 141 tiny wrappers, for 2,688 matched pairs in total.
+- **Result:** 94 of the host's ~200 Shadow function bindings have a HIGH-confidence Heroes address.
+  - All of them land in the same-named section, a check the tool doesn't use.
+  - The DSOUND wrappers keep identical spacing.
+- **D3D library layout:** Heroes = Shadow − about `0xA4D70`, with small drift where functions changed size between XDK 5849 and 5659. The tool's "layout" evidence uses this.
+- **What doesn't match automatically:**
+  - XAPI/CRT internals that changed between XDK builds (heap, `XInputOpen`)
+  - Shadow's own game code and data, which has no copy in Heroes
+  - mid-function hooks inside functions that changed
+- `IDirectSoundBuffer_SetMixBinVolumes` has no slot in Heroes' DSOUND layout (`SetHeadroom` → `Play` is 0x1C apart in Heroes, but 0x38 in Shadow with it in between). Heroes' 5659 DSOUND probably doesn't link it.
