@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Shadow Recompiled
-Exec=/app/bin/ShadowRecomp
-Type=Application
-Icon=io.github.foxworkshop.shadowrecomp
-Categories=Game;
-Comment=Static recompilation of Shadow the Hedgehog (2005)
-MimeType=x-scheme-handler/shadowrecomp

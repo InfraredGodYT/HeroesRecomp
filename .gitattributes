@@ -3,7 +3,7 @@
 ###############################################################################
 * text=auto
 
-ShadowRecomp/gpu/ubershaders/generated/** text eol=lf
+HeroesRecomp/gpu/ubershaders/generated/** text eol=lf
 
 ###############################################################################
 # Set default behavior for command prompt diff.

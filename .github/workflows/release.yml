@@ -13,7 +13,7 @@ jobs:
       - name: Checkout version to compare
         uses: actions/checkout@v7
         with:
-          sparse-checkout: ShadowRecomp/res/version.txt
+          sparse-checkout: HeroesRecomp/res/version.txt
           sparse-checkout-cone-mode: false
 
       # safety check because I know I'll mess this up otherwise
@@ -22,7 +22,7 @@ jobs:
         env:
           TAG: ${{ github.event.release.tag_name }}
         run: |
-          get() { sed -n "s/^$1=\"\?\([^\"]*\)\"\?\r\?$/\1/p" ShadowRecomp/res/version.txt; }
+          get() { sed -n "s/^$1=\"\?\([^\"]*\)\"\?\r\?$/\1/p" HeroesRecomp/res/version.txt; }
           VERSION="v$(get VERSION_MAJOR).$(get VERSION_MINOR).$(get VERSION_REVISION)"
           if [ "${TAG}" != "${VERSION}" ]; then
             echo "::error::Tag ${TAG} does not match expected ${VERSION}"
@@ -51,10 +51,10 @@ jobs:
       - name: Prep
         run: |
           mkdir ./assets
-          cp ./artifacts/ShadowRecomp-Flatpak-x86_64/*.flatpak ./assets/ShadowRecomp-Flatpak-x86_64-${VERSION}.flatpak
-          cp ./artifacts/ShadowRecomp-Linux-x86_64-linux-release/*.tar.gz ./assets/ShadowRecomp-Linux-x86_64-${VERSION}.tar.gz
-          (cd ./artifacts/ShadowRecomp-Windows-x64-Clang-Release && zip -r ../../assets/ShadowRecomp-Windows-x64-${VERSION}.zip .)
-          (cd ./artifacts/ShadowRecomp-Windows-x64-Clang-Release-PDB && zip -r ../../assets/ShadowRecomp-Windows-x64-${VERSION}-PDB.zip .)
+          cp ./artifacts/HeroesRecomp-Flatpak-x86_64/*.flatpak ./assets/HeroesRecomp-Flatpak-x86_64-${VERSION}.flatpak
+          cp ./artifacts/HeroesRecomp-Linux-x86_64-linux-release/*.tar.gz ./assets/HeroesRecomp-Linux-x86_64-${VERSION}.tar.gz
+          (cd ./artifacts/HeroesRecomp-Windows-x64-Clang-Release && zip -r ../../assets/HeroesRecomp-Windows-x64-${VERSION}.zip .)
+          (cd ./artifacts/HeroesRecomp-Windows-x64-Clang-Release-PDB && zip -r ../../assets/HeroesRecomp-Windows-x64-${VERSION}-PDB.zip .)
           ls -l ./assets
 
       - name: Upload

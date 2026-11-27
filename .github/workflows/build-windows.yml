@@ -87,34 +87,34 @@ jobs:
           & "$llvm\clang-cl.exe" --version
 
       - name: Prepare Project
-        run: copy .\private\* .\ShadowRecompLib\private
+        run: copy .\private\* .\HeroesRecompLib\private
 
       - name: Configure Project
-        run: cmake . --preset ${{ env.CMAKE_PRESET }} -DSHADOW_RECOMP_XBOXRECOMP2=binary
+        run: cmake . --preset ${{ env.CMAKE_PRESET }} -DHEROES_RECOMP_XBOXRECOMP2=binary
         # -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
 
       - name: Build Project
-        run: cmake --build .\out\build\${{ env.CMAKE_PRESET }} --target ShadowRecomp
+        run: cmake --build .\out\build\${{ env.CMAKE_PRESET }} --target HeroesRecomp
 
       - name: Pack Release
         run: |
           New-Item -ItemType Directory -Path .\release\D3D12
 
-          Move-Item -Path ".\out\build\${{ env.CMAKE_PRESET }}\ShadowRecomp\D3D12\D3D12Core.dll" -Destination ".\release\D3D12\D3D12Core.dll"
-          Move-Item -Path ".\out\build\${{ env.CMAKE_PRESET }}\ShadowRecomp\dxcompiler.dll" -Destination ".\release\dxcompiler.dll"
-          Move-Item -Path ".\out\build\${{ env.CMAKE_PRESET }}\ShadowRecomp\dxil.dll" -Destination ".\release\dxil.dll"
-          Move-Item -Path ".\out\build\${{ env.CMAKE_PRESET }}\ShadowRecomp\ShadowRecomp.exe" -Destination ".\release\ShadowRecomp.exe"
+          Move-Item -Path ".\out\build\${{ env.CMAKE_PRESET }}\HeroesRecomp\D3D12\D3D12Core.dll" -Destination ".\release\D3D12\D3D12Core.dll"
+          Move-Item -Path ".\out\build\${{ env.CMAKE_PRESET }}\HeroesRecomp\dxcompiler.dll" -Destination ".\release\dxcompiler.dll"
+          Move-Item -Path ".\out\build\${{ env.CMAKE_PRESET }}\HeroesRecomp\dxil.dll" -Destination ".\release\dxil.dll"
+          Move-Item -Path ".\out\build\${{ env.CMAKE_PRESET }}\HeroesRecomp\HeroesRecomp.exe" -Destination ".\release\HeroesRecomp.exe"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ShadowRecomp-Windows-${{ env.CMAKE_PRESET }}
+          name: HeroesRecomp-Windows-${{ env.CMAKE_PRESET }}
           path: .\release
           retention-days: 3
 
       - name: Upload PDB
         uses: actions/upload-artifact@v7
         with:
-          name: ShadowRecomp-Windows-${{ env.CMAKE_PRESET }}-PDB
-          path: .\out\build\${{ env.CMAKE_PRESET }}\ShadowRecomp\ShadowRecomp.pdb
+          name: HeroesRecomp-Windows-${{ env.CMAKE_PRESET }}-PDB
+          path: .\out\build\${{ env.CMAKE_PRESET }}\HeroesRecomp\HeroesRecomp.pdb
           retention-days: 3

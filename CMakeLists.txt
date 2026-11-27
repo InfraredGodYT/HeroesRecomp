@@ -7,8 +7,8 @@ if(NOT DEFINED ENV{VCPKG_ROOT})
     message(FATAL_ERROR "VCPKG_ROOT is not defined!")
 endif()
 
-set(SHADOW_RECOMP_THIRDPARTY_ROOT ${CMAKE_SOURCE_DIR}/thirdparty)
-set(SHADOW_RECOMP_TOOLS_ROOT ${CMAKE_SOURCE_DIR}/tools)
+set(HEROES_RECOMP_THIRDPARTY_ROOT ${CMAKE_SOURCE_DIR}/thirdparty)
+set(HEROES_RECOMP_TOOLS_ROOT ${CMAKE_SOURCE_DIR}/tools)
 set(CMAKE_CXX_STANDARD 20)
 set(BUILD_SHARED_LIBS OFF)
 set(VCPKG_APPLOCAL_DEPS OFF)
@@ -21,7 +21,7 @@ endif()
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-project ("ShadowRecomp-ALL")
+project ("HeroesRecomp-ALL")
 
 # Ship symbols with release builds (for now)
 if (MSVC)
@@ -30,16 +30,16 @@ if (MSVC)
 endif()
 
 if (CMAKE_OSX_ARCHITECTURES)
-    set(SHADOW_RECOMP_ARCHITECTURE ${CMAKE_OSX_ARCHITECTURES})
+    set(HEROES_RECOMP_ARCHITECTURE ${CMAKE_OSX_ARCHITECTURES})
 elseif(CMAKE_SYSTEM_PROCESSOR)
-    set(SHADOW_RECOMP_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+    set(HEROES_RECOMP_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
 else()
-    set(SHADOW_RECOMP_ARCHITECTURE ${CMAKE_HOST_SYSTEM_PROCESSOR})
+    set(HEROES_RECOMP_ARCHITECTURE ${CMAKE_HOST_SYSTEM_PROCESSOR})
 endif()
-string(TOLOWER "${SHADOW_RECOMP_ARCHITECTURE}" SHADOW_RECOMP_ARCHITECTURE)
-message(STATUS "Detected architecture: ${SHADOW_RECOMP_ARCHITECTURE}")
+string(TOLOWER "${HEROES_RECOMP_ARCHITECTURE}" HEROES_RECOMP_ARCHITECTURE)
+message(STATUS "Detected architecture: ${HEROES_RECOMP_ARCHITECTURE}")
 
-if (SHADOW_RECOMP_ARCHITECTURE STREQUAL "x86_64" OR SHADOW_RECOMP_ARCHITECTURE STREQUAL "amd64")
+if (HEROES_RECOMP_ARCHITECTURE STREQUAL "x86_64" OR HEROES_RECOMP_ARCHITECTURE STREQUAL "amd64")
     add_compile_options(
         -march=sandybridge # You have a puter made after 2011, right?
         -mtune=znver4      # Most probably have one circa 2022-2023
@@ -50,15 +50,15 @@ endif()
 # Some toolchains (e.g. Nix's clang wrapper) turn this on by default.
 # It adds a few `xor`s to every function: ~1.8% code size, with only speed loss.
 include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag(-fzero-call-used-regs=skip SHADOW_RECOMP_HAS_ZERO_CALL_USED_REGS)
-if (SHADOW_RECOMP_HAS_ZERO_CALL_USED_REGS)
+check_cxx_compiler_flag(-fzero-call-used-regs=skip HEROES_RECOMP_HAS_ZERO_CALL_USED_REGS)
+if (HEROES_RECOMP_HAS_ZERO_CALL_USED_REGS)
     add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-fzero-call-used-regs=skip>)
 endif()
 
 
-add_subdirectory(${SHADOW_RECOMP_THIRDPARTY_ROOT})
-add_subdirectory(${SHADOW_RECOMP_TOOLS_ROOT})
+add_subdirectory(${HEROES_RECOMP_THIRDPARTY_ROOT})
+add_subdirectory(${HEROES_RECOMP_TOOLS_ROOT})
 
 # Include sub-projects.
-add_subdirectory("ShadowRecompLib")
-add_subdirectory ("ShadowRecomp")
+add_subdirectory("HeroesRecompLib")
+add_subdirectory ("HeroesRecomp")

@@ -80,20 +80,20 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.arch.name }}-
 
       - name: Prepare Project
-        run: cp ./private/* ./ShadowRecompLib/private
+        run: cp ./private/* ./HeroesRecompLib/private
 
       - name: Configure Project
-        run: cmake . --preset ${{ env.CMAKE_PRESET }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DSHADOW_RECOMP_XBOXRECOMP2=binary
+        run: cmake . --preset ${{ env.CMAKE_PRESET }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DHEROES_RECOMP_XBOXRECOMP2=binary
 
       - name: Build Project
-        run: cmake --build ./out/build/${{ env.CMAKE_PRESET }} --target ShadowRecomp
+        run: cmake --build ./out/build/${{ env.CMAKE_PRESET }} --target HeroesRecomp
 
       - name: Pack Release
-        run: tar -czf ./ShadowRecomp-Linux-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}.tar.gz -C ./out/build/${{ env.CMAKE_PRESET }}/ShadowRecomp ShadowRecomp libdxcompiler.so
+        run: tar -czf ./HeroesRecomp-Linux-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}.tar.gz -C ./out/build/${{ env.CMAKE_PRESET }}/HeroesRecomp HeroesRecomp libdxcompiler.so
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ShadowRecomp-Linux-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}
-          path: ./ShadowRecomp-Linux-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}.tar.gz
+          name: HeroesRecomp-Linux-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}
+          path: ./HeroesRecomp-Linux-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}.tar.gz
           retention-days: 3

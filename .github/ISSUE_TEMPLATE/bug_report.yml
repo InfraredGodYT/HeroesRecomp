@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug in Shadow Recompiled
+description: Report a bug in Heroes Recompiled
 type: "Bug"
 body:
   - type: checkboxes
@@ -7,7 +7,7 @@ body:
     attributes:
       label: Validation
       options:
-        - label: I have checked the [Issues](https://github.com/FoxWorkshop/ShadowRecomp/issues) page to see if my problem has already been reported
+        - label: I have checked the [Issues](https://github.com/InfraredGodYT/HeroesRecomp/issues) page to see if my problem has already been reported
           required: true
         - label: I have confirmed that this bug does not occur in the original game running on Original Xbox hardware
           required: true

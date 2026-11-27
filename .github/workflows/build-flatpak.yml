@@ -18,7 +18,7 @@ jobs:
           {"name": "arm64", "runner": "ubuntu-26.04-arm"},
         ]
     env:
-      FLATPAK_ID: io.github.foxworkshop.shadowrecomp
+      FLATPAK_ID: io.github.infraredgodyt.heroesrecomp
 
     steps:
       - name: Checkout Repository
@@ -60,10 +60,10 @@ jobs:
           key: ccache-${{ runner.os }}-${{ matrix.arch.name }}
 
       - name: Prepare Project
-        run: cp ./private/* ./ShadowRecompLib/private
+        run: cp ./private/* ./HeroesRecompLib/private
 
       - name: Download XboxRecomp2
-        run: cmake -DVERSION=0.5.1 -DDESTINATION=out/xr2-bin -P ShadowRecompLib/cmake/recompile/select/download.cmake
+        run: cmake -DVERSION=0.5.1 -DDESTINATION=out/xr2-bin -P HeroesRecompLib/cmake/recompile/select/download.cmake
 
       - name: Prepare Flatpak
         run: |
@@ -72,7 +72,7 @@ jobs:
       # flatpak-builder ignores ref, set the flag manually
       - name: Tag Build Prep
         if: github.ref_type == 'tag'
-        run: sed -i 's/-DSHADOW_RECOMP_FLATPAK=ON/-DSHADOW_RECOMP_FLATPAK=ON -DSHADOW_RECOMP_TAG_BUILD=ON/' ./flatpak/${{ env.FLATPAK_ID }}.json
+        run: sed -i 's/-DHEROES_RECOMP_FLATPAK=ON/-DHEROES_RECOMP_FLATPAK=ON -DHEROES_RECOMP_TAG_BUILD=ON/' ./flatpak/${{ env.FLATPAK_ID }}.json
 
       - name: Build Flatpak
         run: |
@@ -84,6 +84,6 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ShadowRecomp-Flatpak-${{ matrix.arch.name }}
+          name: HeroesRecomp-Flatpak-${{ matrix.arch.name }}
           path: ./${{ env.FLATPAK_ID }}.flatpak
           retention-days: 3

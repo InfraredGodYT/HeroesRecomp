@@ -1,4 +1,4 @@
-# ShadowRecomp dev shell: setup + commands, in one file.
+# HeroesRecomp dev shell: setup + commands, in one file.
 #
 # Sourced by the flake's shellHook. Lifted out for cleanliness; to avoid
 # a nasty looking indent.
@@ -15,7 +15,7 @@
 # ------------------------------------------------------------------------------
 
 if [ -z "${SR_BUILD_RPATH:-}" ]; then
-  echo "shadowrecomp: dev-shell environment missing; enter the nix dev shell first" >&2
+  echo "heroesrecomp: dev-shell environment missing; enter the nix dev shell first" >&2
   return 1
 fi
 
@@ -36,7 +36,7 @@ sr_type_dir() { echo "$SR_ROOT/out/build/nix-$(echo "$1" | tr '[:upper:]' '[:low
 sr_configure() {
   local type="$1"; shift
   if [ ! -f "$SR_ROOT/tools/XShaderRecomp/thirdparty/dxc-bin/bin/x64/dxc-linux" ]; then
-    echo "shadowrecomp: dxc-linux missing (submodule initialization failed?)" >&2
+    echo "heroesrecomp: dxc-linux missing (submodule initialization failed?)" >&2
     return 1
   fi
   # Release-family builds get LTO everywhere else (see CMakePresets.json); match
@@ -69,24 +69,24 @@ sr_configure() {
   ln -sfn "$(sr_type_dir "$type")/compile_commands.json" "$SR_ROOT/compile_commands.json"
 }
 
-# Builds the ShadowRecomp target; configures first if needed.
+# Builds the HeroesRecomp target; configures first if needed.
 sr_build() {
   local type="$1"; shift
   local bdir; bdir="$(sr_type_dir "$type")"
   if [ ! -f "$bdir/build.ninja" ]; then
     sr_configure "$type" || return 1
   fi
-  cmake --build "$bdir" --target ShadowRecomp "$@"
+  cmake --build "$bdir" --target HeroesRecomp "$@"
 }
 
 # Runs the built binary.
 sr_run() {
   local type="$1"; shift
 
-  # Binary: out/build/nix-<type>/ShadowRecomp/ShadowRecomp.
+  # Binary: out/build/nix-<type>/HeroesRecomp/HeroesRecomp.
   local bdir; bdir="$(sr_type_dir "$type")"
-  local exe="$bdir/ShadowRecomp/ShadowRecomp"
-  [ -x "$exe" ] || { echo "shadowrecomp: $exe not built; run build-$(echo "$type" | tr '[:upper:]' '[:lower:]')" >&2; return 1; }
+  local exe="$bdir/HeroesRecomp/HeroesRecomp"
+  [ -x "$exe" ] || { echo "heroesrecomp: $exe not built; run build-$(echo "$type" | tr '[:upper:]' '[:lower:]')" >&2; return 1; }
 
   exec "$exe" "$@"
 }
@@ -95,11 +95,11 @@ sr_clean() { rm -rf "$SR_ROOT"/out/build/nix-*; }
 
 sr_help() {
   cat <<'EOS'
-ShadowRecomp dev shell.
+HeroesRecomp dev shell.
 <type> = debug | relwithdebinfo | release
 
   Build:
-    build-<type>            configure (if needed) + build ShadowRecomp
+    build-<type>            configure (if needed) + build HeroesRecomp
     configure-<type>        CMake configure only
     sr-clean                delete out/build/nix-*
 
@@ -171,14 +171,14 @@ if [ -z "${SR_WRAPPER:-}" ]; then
 
   # Submodules: checked out automatically (flakes do not fetch them).
   if git -C "$SR_ROOT" submodule status --recursive 2>/dev/null | grep -q '^-'; then
-    echo "shadowrecomp: initializing submodules..."
+    echo "heroesrecomp: initializing submodules..."
     git -C "$SR_ROOT" submodule update --init --recursive || {
       echo "ERROR: submodule initialization failed." >&2
     }
   fi
 
-  [ -f "$SR_ROOT/ShadowRecompLib/private/default.xbe" ] || {
-    echo "WARNING: ShadowRecompLib/private/default.xbe missing - build will fail." >&2
+  [ -f "$SR_ROOT/HeroesRecompLib/private/default.xbe" ] || {
+    echo "WARNING: HeroesRecompLib/private/default.xbe missing - build will fail." >&2
     echo "         Copy it from your own game copy (docs/BUILDING.md)." >&2
   }
 

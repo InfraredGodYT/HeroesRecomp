@@ -2,10 +2,10 @@
 
 ## 1. Clone the Repository
 
-Clone **ShadowRecomp** with submodules using [Git].
+Clone **HeroesRecomp** with submodules using [Git].
 
 ```
-git clone --recurse-submodules https://github.com/FoxWorkShop/ShadowRecomp.git
+git clone --recurse-submodules https://github.com/FoxWorkShop/HeroesRecomp.git
 ```
 
 ### Windows
@@ -15,7 +15,7 @@ Run `update_submodules.bat` if you skipped/forgot  `--recurse-submodules`.
 ## 2. Add the Required Game Files
 
 Copy `default.xbe` from an extracted game and place it inside
-`./ShadowRecompLib/private/`.
+`./HeroesRecompLib/private/`.
 
 > [!TIP]
 > If you ran recomp before, you can find it in `./game/default.xbe`,
@@ -69,8 +69,8 @@ downloads a release binary.
 
 Optional CMake flags:
 
-- `-DSHADOW_RECOMP_XBOXRECOMP2=source|binary`: force one method.
-- `-DSHADOW_RECOMP_XBOXRECOMP2_EXECUTABLE=/path/to/xboxrecomp2`: use a binary
+- `-DHEROES_RECOMP_XBOXRECOMP2=source|binary`: force one method.
+- `-DHEROES_RECOMP_XBOXRECOMP2_EXECUTABLE=/path/to/xboxrecomp2`: use a binary
   you already have.
 
 ## 4. Build the Project
@@ -85,7 +85,7 @@ Optional CMake flags:
 
 ![](./assets/windows-setup-1.webp)
 
-3. Right-click **ShadowRecomp**, choose **Set as Startup Item**, then choose
+3. Right-click **HeroesRecomp**, choose **Set as Startup Item**, then choose
    **Add Debug Configuration**.
 
 ![](./assets/windows-setup-2.webp)
@@ -99,7 +99,7 @@ And add a `currentDir` and `args` property.
 This will prevent you from having to reinstall game when switching between
 configurations.
 
-5. Start **ShadowRecomp**. May take a while the first time due to code and
+5. Start **HeroesRecomp**. May take a while the first time due to code and
    shader recompilation.
 
 ### Linux
@@ -115,12 +115,12 @@ cmake . --preset linux-release
 
 2. Build using the selected configuration.
 ```bash
-cmake --build ./out/build/linux-release --target ShadowRecomp
+cmake --build ./out/build/linux-release --target HeroesRecomp
 ```
 
 3. Run to wherever game was built, run the game.
 ```bash
-./ShadowRecomp
+./HeroesRecomp
 ```
 
 ### Nix
@@ -154,7 +154,7 @@ Note: If you're using VSCode as your IDE:
 
 [Git]: https://git-scm.com/
 [GitHub CLI]: https://cli.github.com/
-[Releases]: https://github.com/FoxWorkshop/ShadowRecomp/releases
+[Releases]: https://github.com/InfraredGodYT/HeroesRecomp/releases
 [Rust]: https://rustup.rs/
 [Visual Studio 2026]: https://visualstudio.microsoft.com/downloads/
 [XboxRecomp2]: https://github.com/Sewer56/XboxRecomp2

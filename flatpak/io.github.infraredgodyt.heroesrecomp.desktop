@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Heroes Recompiled
+Exec=/app/bin/HeroesRecomp
+Type=Application
+Icon=io.github.infraredgodyt.heroesrecomp
+Categories=Game;
+Comment=Static recompilation of Sonic Heroes (2003)
+MimeType=x-scheme-handler/heroesrecomp

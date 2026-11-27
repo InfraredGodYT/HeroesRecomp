@@ -1,0 +1,50 @@
+{
+  "id": "io.github.infraredgodyt.heroesrecomp",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "26.08",
+  "sdk": "org.freedesktop.Sdk",
+  "sdk-extensions": ["org.freedesktop.Sdk.Extension.llvm22"],
+  "command": "HeroesRecomp",
+  "finish-args": [
+    "--share=network",
+    "--socket=wayland",
+    "--socket=fallback-x11",
+    "--socket=pulseaudio",
+    "--talk-name=org.mpris.MediaPlayer2.*",
+    "--device=all",
+    "--filesystem=host",
+    "--filesystem=/media",
+    "--filesystem=/run/media",
+    "--filesystem=/mnt",
+    "--filesystem=xdg-run/gamescope-0:ro"
+  ],
+  "modules": [
+    {
+      "name": "HeroesRecomp",
+      "buildsystem": "simple",
+      "build-commands": [
+        "cmake --preset linux-release -DHEROES_RECOMP_FLATPAK=ON -DHEROES_RECOMP_XBOXRECOMP2=binary -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache",
+        "cmake --build out/build/linux-release --target HeroesRecomp",
+        "mkdir -p /app/bin",
+        "cp out/build/linux-release/HeroesRecomp/HeroesRecomp /app/bin/HeroesRecomp",
+        "cp tools/XShaderRecomp/thirdparty/dxc-bin/lib/x64/libdxcompiler.so /app/bin/",
+        "install -Dm644 ShadowRecompResources/images/game_icon.png /app/share/icons/hicolor/128x128/apps/${FLATPAK_ID}.png",
+        "install -Dm644 flatpak/io.github.infraredgodyt.heroesrecomp.metainfo.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml",
+        "install -Dm644 flatpak/io.github.infraredgodyt.heroesrecomp.desktop /app/share/applications/${FLATPAK_ID}.desktop"
+      ],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "../"
+        }
+      ],
+      "build-options": {
+        "append-path": "/usr/lib/sdk/llvm22/bin",
+        "prepend-ld-library-path": "/usr/lib/sdk/llvm22/lib",
+        "build-args": [
+          "--share=network"
+        ]
+      }
+    }
+  ]
+}

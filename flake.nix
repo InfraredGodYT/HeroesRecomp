@@ -6,7 +6,7 @@
 # a wrapped AppImage; due to the
 # above limitation.
 {
-  description = "Shadow Recompiled - unofficial PC port of Shadow the Hedgehog (2005, Xbox) via static recompilation (dev shell)";
+  description = "Heroes Recompiled - unofficial PC port of Sonic Heroes (2003, Xbox) via static recompilation (dev shell)";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs = {
@@ -20,7 +20,7 @@
     # SDL3 static build deps, exported via CMake find modules / pkg-config.
     sdlDeps = with pkgs; [
       # SDL - X11
-      libX11 # also linked directly: find_package(X11) in ShadowRecomp/CMakeLists
+      libX11 # also linked directly: find_package(X11) in HeroesRecomp/CMakeLists
       libXcursor
       libXext
       libXfixes
@@ -90,7 +90,7 @@
     in "${loader};--library-path;${dxcRuntimeLibs}:${dxcLibs};${dxcBin}";
   in {
     devShells.${system}.default = pkgs.clangStdenv.mkDerivation {
-      name = "shadowrecomp-devshell";
+      name = "heroesrecomp-devshell";
 
       # Values consumed by nix/sr-env.sh (see shellHook).
       SR_DXC = dxcTool;

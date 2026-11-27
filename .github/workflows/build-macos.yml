@@ -68,20 +68,20 @@ jobs:
             vcpkg-${{ runner.os }}-${{ matrix.arch.name }}-
 
       - name: Prepare Project
-        run: cp ./private/* ./ShadowRecompLib/private
+        run: cp ./private/* ./HeroesRecompLib/private
 
       - name: Configure Project
-        run: cmake . --preset ${{ env.CMAKE_PRESET }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DSHADOW_RECOMP_XBOXRECOMP2=binary
+        run: cmake . --preset ${{ env.CMAKE_PRESET }} -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache -DHEROES_RECOMP_XBOXRECOMP2=binary
 
       - name: Build Project
-        run: cmake --build ./out/build/${{ env.CMAKE_PRESET }} --target ShadowRecomp
+        run: cmake --build ./out/build/${{ env.CMAKE_PRESET }} --target HeroesRecomp
 
       - name: Bundle Vulkan Driver
         run: |
-          export CONTENTS_DIR="./out/build/${{ env.CMAKE_PRESET }}/ShadowRecomp/Shadow Recompiled.app/Contents"
+          export CONTENTS_DIR="./out/build/${{ env.CMAKE_PRESET }}/HeroesRecomp/Heroes Recompiled.app/Contents"
           export ICD_DIR="$CONTENTS_DIR/Resources/vulkan/icd.d"
           export FRAMEWORKS_DIR="$CONTENTS_DIR/Frameworks"
-          export EXECUTABLE_PATH="$CONTENTS_DIR/MacOS/Shadow Recompiled"
+          export EXECUTABLE_PATH="$CONTENTS_DIR/MacOS/Heroes Recompiled"
           mkdir -p "$ICD_DIR"
           mkdir -p "$FRAMEWORKS_DIR"
           wget https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/mac/vulkansdk-macos-$VULKAN_SDK_VERSION.zip
@@ -95,12 +95,12 @@ jobs:
 
       - name: Pack Release
         run: |
-          codesign --deep -fs - "./out/build/${{ env.CMAKE_PRESET }}/ShadowRecomp/Shadow Recompiled.app"
-          tar -czf ./ShadowRecomp-macOS-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}.tar.gz -C ./out/build/${{ env.CMAKE_PRESET }}/ShadowRecomp "Shadow Recompiled.app"
+          codesign --deep -fs - "./out/build/${{ env.CMAKE_PRESET }}/HeroesRecomp/Heroes Recompiled.app"
+          tar -czf ./HeroesRecomp-macOS-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}.tar.gz -C ./out/build/${{ env.CMAKE_PRESET }}/HeroesRecomp "Heroes Recompiled.app"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ShadowRecomp-macOS-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}
-          path: ./ShadowRecomp-macOS-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}.tar.gz
+          name: HeroesRecomp-macOS-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}
+          path: ./HeroesRecomp-macOS-${{ matrix.arch.name }}-${{ env.CMAKE_PRESET }}.tar.gz
           retention-days: 3
