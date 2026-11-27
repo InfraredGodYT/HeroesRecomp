@@ -48,5 +48,5 @@
 	url = https://github.com/redorav/ddspp.git
 [submodule "tools/XboxRecomp2"]
 	path = tools/XboxRecomp2
-	url = https://github.com/Sewer56/XboxRecomp2.git
-	branch = main
+	url = https://github.com/InfraredGodYT/XboxRecomp2.git
+	branch = heroes
