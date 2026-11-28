@@ -217,3 +217,12 @@ The installer used Shadow Recompiled's own branding: an edited official Shadow r
   - The menu confirm sound (`sounds/sys_menu_ok.ogg`, Shadow's gunshot) is now Heroes' menu-select sound (owner's file, converted with ffmpeg).
   - Game sound effects follow the art policy: public is OK, like Shadow Recompiled's. Only music stays local.
   - The cursor, cancel and invalid sounds are still Shadow's.
+
+## 2026-11-28: Fourth crash, XPP driver table
+
+- **Crash 4:** the game got past the CRT into its own code: `sub_2796B7` → `sub_69A00` → `sub_67970` → … → `sub_37F584`. That last one made an indirect call to `0x37EE3C`, which was missing.
+- **Cause:** the XPP section (USB/controller driver) has a dispatch table **embedded in code** at `0x37ECC4`–`0x37EE30`. XboxRecomp2 stopped decoding there ("0x37EC80: stopped at 0x37ECC3") and never followed the pointers.
+- **Fix:** the 6 targets are added to `[fixes] functions`: `0x37EE3C`, `0x37F379`, `0x37FC1A`, `0x380221`, `0x380D23`, `0x383E6A`.
+- **Lesson:** search **all** sections for pointers to Ghidra-only functions, code sections included.
+- **Not a function:** `0x320C3C` (`caseD_0`, referenced from `.text:0x32166C`) is a `switch` case label. If it ever crashes, it needs a `[[switch]]` entry, not a function.
+- **Branding:** the menu cursor/hover sound (`sys_menu_cursor.ogg`, Shadow's gun cock) is now Heroes' menu beep.

@@ -280,6 +280,14 @@ functions = [
 	{ address = 0x373594, size = 0x150 },
 	{ address = 0x3736E4, size = 0x154 },
 	{ address = 0x373838, size = 0xE3 },
+	# XPP (USB/controller driver) dispatch table embedded in code at 0x37ECC4-0x37EE30: its targets were
+	# never followed. Found 2026-11-28 after crash 4 (indirect call to 0x37EE3C). Sizes from Ghidra.
+	{ address = 0x37EE3C, size = 0x10C },
+	{ address = 0x37F379, size = 0x20B },
+	{ address = 0x37FC1A, size = 0x96 },
+	{ address = 0x380221, size = 0x5A },
+	{ address = 0x380D23, size = 0x71 },
+	{ address = 0x383E6A, size = 0x50 },
 ]
 
 # banned_addresses: ranges not to recompile.

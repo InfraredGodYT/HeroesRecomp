@@ -11,6 +11,7 @@ Outputs (same paths as in the resources repo; -Out is the repo root or its local
   images\game_icon.png/.bmp/.ico      128x128 window/exe icon.
   music\installer.ogg                 only with -Music (converted with ffmpeg, Ogg Vorbis: the mixer has no MP3).
   sounds\sys_menu_ok.ogg              only with -SelectSound: the menu confirm/select sound (any format ffmpeg reads).
+  sounds\sys_menu_cursor.ogg          only with -CursorSound: the sound when moving between options (hover).
 
 Policy (docs/notes.md, "Installer branding"): like Shadow Recompiled, official game art may go in the public
 resources; original game music may not. Put it in the gitignored local\ folder (-Out ...\local -Music ...).
@@ -21,7 +22,8 @@ param(
     [string] $Background,
     [string] $Logo,
     [string] $Music,
-    [string] $SelectSound
+    [string] $SelectSound,
+    [string] $CursorSound
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
@@ -116,6 +118,14 @@ if ($SelectSound) {
     $dst = Join-Path $Out 'sounds\sys_menu_ok.ogg'
     New-Item -ItemType Directory -Force (Split-Path $dst) | Out-Null
     & ffmpeg -hide_banner -loglevel error -y -i $SelectSound -vn -c:a libvorbis -q:a 6 $dst
+    if ($LASTEXITCODE -ne 0) { throw "ffmpeg failed" }
+}
+
+# ---- menu cursor/hover sound (optional)
+if ($CursorSound) {
+    $dst = Join-Path $Out 'sounds\sys_menu_cursor.ogg'
+    New-Item -ItemType Directory -Force (Split-Path $dst) | Out-Null
+    & ffmpeg -hide_banner -loglevel error -y -i $CursorSound -vn -c:a libvorbis -q:a 6 $dst
     if ($LASTEXITCODE -ne 0) { throw "ffmpeg failed" }
 }
 
