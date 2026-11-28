@@ -781,7 +781,9 @@ void SetSpinTrailColors()
 
 void ModLoader::ApplyHelperPatches()
 {
+#if 0 // HEROES-TODO: writes Shadow's spin-trail colour table (0x449D60) when a mod sets colours
 	SetSpinTrailColors();
+#endif // HEROES-TODO
 }
 
 static std::vector<std::string> ReadOneFileAssetNames(const fs::path& path)

@@ -5,8 +5,8 @@ Make the installer/branding images Heroes Recompiled embeds, at the sizes and la
   make_branding.ps1 -Out ShadowRecompResources\local -Background <img> -Logo <img> [-Music <audio>]
 
 Outputs (same paths as in the resources repo; -Out is the repo root or its local\ override folder):
-  images\installer\installer_bg.png   512x512. Stretched over the whole window; the bottom 32/512 is cut off
-                                      (installer_wizard.cpp), so the picture fills the top 480 rows.
+  images\installer\installer_bg.png   Any shape, longer side <= 1024. The installer fills the window with it,
+                                      keeping its proportions and trimming the overflow (installer_wizard.cpp).
   images\installer\FoxLogo.png        640x512 RGBA. Drawn from the crop (71,17)-(591,499) next to the title text.
   images\game_icon.png/.bmp/.ico      128x128 window/exe icon.
   music\installer.ogg                 only with -Music (converted with ffmpeg, Ogg Vorbis: the mixer has no MP3).
@@ -57,15 +57,17 @@ function Draw-Circles($g, [float] $cx, [float] $cy, [float] $r) {
     }
 }
 
-# ---- installer background (512x512, picture in the top 480 rows)
-$bmp, $g = New-Canvas 512 512
-$g.Clear([System.Drawing.Color]::Black)
+# ---- installer background: kept at its own proportions (the installer fills the window and trims the
+# overflow), downscaled so the longer side is at most 1024 px.
 if ($Background) {
     $img = [System.Drawing.Image]::FromFile((Resolve-Path $Background))
-    $g.DrawImage($img, 0, 0, 512, 480)   # stretched on purpose: the installer stretches it back to the window
+    $s = [Math]::Min(1.0, 1024.0 / [Math]::Max($img.Width, $img.Height))
+    $bmp, $g = New-Canvas ([int][Math]::Round($img.Width * $s)) ([int][Math]::Round($img.Height * $s))
+    $g.DrawImage($img, 0, 0, $bmp.Width, $bmp.Height)
     $img.Dispose()
 } else {
-    $rect = New-Object System.Drawing.Rectangle 0, 0, 512, 480
+    $bmp, $g = New-Canvas 1024 576
+    $rect = New-Object System.Drawing.Rectangle 0, 0, 1024, 576
     $brush = New-Object System.Drawing.Drawing2D.LinearGradientBrush $rect, ([System.Drawing.Color]::FromArgb(255, 20, 60, 140)), ([System.Drawing.Color]::FromArgb(255, 5, 10, 30)), 90
     $g.FillRectangle($brush, $rect); $brush.Dispose()
 }

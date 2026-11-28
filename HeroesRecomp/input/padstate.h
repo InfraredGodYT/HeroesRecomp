@@ -39,7 +39,11 @@ namespace PJSPeripheral
 
     inline ControllerSlot* GetControllerSlot(uint32_t index)
     {
+#if 0 // HEROES-TODO: Shadow's ControllerManager singleton (0x541A68); Heroes' equivalent not found yet
         uint8_t* base = (uint8_t*)MmGetHostAddress(0x541A68); // get singleton of ControllerManager
+#else
+        uint8_t* base = nullptr; // callers treat nullptr as "no controller state"
+#endif
         if (!base)
             return nullptr;
 

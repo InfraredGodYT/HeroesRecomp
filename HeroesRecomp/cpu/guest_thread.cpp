@@ -32,7 +32,7 @@ typedef struct _ETHREAD_R
 ETHREAD_R;
 static_assert(sizeof(ETHREAD_R) == 0x140);
 
-const uint32_t tls_indexAddr = 0x5599A8;
+// Heroes: was `const uint32_t tls_indexAddr = 0x5599A8;` (Shadow's _tls_index). Now read from m_TLS->dwTLSIndexAddr.
 constexpr size_t KPCR_SIZE = 0x280;
 constexpr size_t ETHREAD_R_SIZE = sizeof(_ETHREAD_R);
 
@@ -176,8 +176,14 @@ GuestThreadContext::GuestThreadContext(GuestThreadParams params)
 
 		int addr = g_memory.MapVirtual(thread) + 0x4;
 		auto base = g_memory.base;
-		int ptrAddr = X86_LOAD_U32(addr) + (X86_LOAD_U32(tls_indexAddr) * 4);
-		X86_STORE_U32(ptrAddr, eThread->Tcb.TlsData);
+		// Heroes: _tls_index's address comes from the XBE's TLS directory (Heroes 0x611654), not Shadow's
+		// hardcoded 0x5599A8. With the wrong one, the TLS pointer went to the wrong slot and the C runtime's
+		// per-thread setup wrote through a null pointer at startup.
+		if (m_TLS)
+		{
+			int ptrAddr = X86_LOAD_U32(addr) + (X86_LOAD_U32(m_TLS->dwTLSIndexAddr) * 4);
+			X86_STORE_U32(ptrAddr, eThread->Tcb.TlsData);
+		}
 	}
 
 	*(uint32_t*)(Prcb + 0x04B) = GuestThread::GetCurrentThreadId(); //maybe

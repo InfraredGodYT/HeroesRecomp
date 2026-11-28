@@ -176,3 +176,30 @@ The installer used Shadow Recompiled's own branding: an edited official Shadow r
 - menu sounds (`sounds/sys_menu_*.ogg`)
 - font atlas, button images, achievement and multiplayer-HUD art
 - the animated fire and line effects drawn over the installer background (`DrawAnimatedFire`/`DrawLoopLines` in `installer_wizard.cpp`, code, Shadow-themed)
+
+## 2026-11-28: Second crash (TLS) and hidden Shadow constants
+
+- **Crash 2:** a null write to guest `0xC` in `sub_27F12B`, which is the C runtime's per-thread setup, called from the initializer table walker `sub_27B343`.
+  - **Cause:** `cpu/guest_thread.cpp` stored the thread's TLS pointer using Shadow's hardcoded `_tls_index` address (`0x5599A8`).
+  - **Fix:** read it from the XBE's TLS directory (`m_TLS->dwTLSIndexAddr`; Heroes `0x611654`), so it's correct for any XBE.
+- **Hidden constants:** that address was invisible to `shadow_bindings.py`, because it was a named constant. The scanner now also reports **any hex literal inside Shadow's image range** (kind `const`), and `match_shadow.py` matches them. 30 found:
+  - **Matched by cross-references:**
+    - D3D device pointer `0x3E0A18`→`0x33BC38` (83/83)
+    - device memory `0x3E0A20`→`0x33BC40`
+    - render-state table `0x3E0780`→`0x33B9A0`
+    - deferred texture state `0x3E0580`→`0x33B7A0`
+    - RW D3D8 raster ext offset `0x57DD20`→`0x632898`
+    - CRI TObjBGM `0x5502EC`→`0x548714`
+  - **Verified in Ghidra:** the OHCI USB interrupt handler the host must not call, Shadow `0x4286AD` → Heroes `0x3851C0` (identical body).
+  - **Disabled until found:**
+    - `padstate.h` `GetControllerSlot` (Shadow ControllerManager `0x541A68`) returns `nullptr`
+    - the voice lookup on TObjSERIF (`0x5502FC`; candidate `0x548724`, 1/1)
+    - the mod loader's spin-trail colour writes (`0x449D60`)
+  - **Unused or harmless:**
+    - `PresentMemAddr`, `AutoDepthStencilFormat`, `g_cameraAddr`, `ppDSEventAddr` and `FindBonSlot` (`util.h`, uncalled)
+    - `dword_55FDEC` (only in the unregistered `_XbSubmitNode` midasm hook)
+    - the thread-name `case` labels
+    - `ADXM_VSYNC_THREAD`/`ADXM_FS_THREAD` (`video.cpp`): they only matter above 60 FPS (Phase 4)
+- **Installer:**
+  - **Background:** the owner's square Sonic Heroes artwork (free to use, no credit required). It's drawn keeping its proportions ("cover": fill the window, trim the overflow) instead of stretched, with no 32 px crop.
+  - **Effects:** Shadow's animated fire and loop lines are no longer drawn; their functions are left in place, unused.

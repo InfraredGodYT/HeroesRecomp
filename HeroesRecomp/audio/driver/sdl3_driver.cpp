@@ -55,7 +55,7 @@ static float SoftClip(float sample)
 // 2 TObjBGM (music, jingles)
 // 2 TObjSERIF (voices)
 // any other ADX is invoked by SFDs
-static constexpr uint32_t g_TOBJBGM = 0x5502EC;
+static constexpr uint32_t g_TOBJBGM = 0x548714; // Heroes (Shadow 0x5502EC), xref 4/4
 static constexpr uint32_t g_TOBJSERIF = 0x5502FC;
 static constexpr uint32_t BGM_ADXT = 0x44;
 static constexpr uint32_t BGM_NAME = 0x50;
@@ -869,10 +869,12 @@ void SHTHR_SOUNDBUFFER_Impl::DetermineStreamType()
 		const std::string name = GetAdxtFileName(X86_LOAD_U32(bgm + BGM_ADXT));
 		mSourceType = IsEventTrack(name) ? SOURCE_TYPE_EVENTS : SOURCE_TYPE_MUSIC;
 	}
+#if 0 // HEROES-TODO: Shadow's TObjSERIF (voice) object at 0x5502FC; Heroes' address unconfirmed (match_shadow xref 1/1: 0x548724)
 	else if (FindIsndObject(g_TOBJSERIF, SERIF_ADXT, keyBuffer))
 	{
 		mSourceType = SOURCE_TYPE_VOICES;
 	}
+#endif // HEROES-TODO
 	else if (this->isStreaming)
 	{
 		mSourceType = SOURCE_TYPE_SFD;

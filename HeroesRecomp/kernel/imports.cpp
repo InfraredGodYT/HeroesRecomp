@@ -91,7 +91,9 @@ public:
 		uint32_t funcAddr = (uint32_t)Interrupt->ServiceRoutine;
 
 
-		if (funcAddr == 0x4286AD)
+		// Heroes: USB host controller (OHCI) ISR in the XPP section. Shadow 0x4286AD -> Heroes 0x3851C0,
+		// same decompiled body in Ghidra (2026-11-28).
+		if (funcAddr == 0x3851C0)
 		{
 			return;
 		

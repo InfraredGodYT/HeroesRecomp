@@ -16,7 +16,7 @@ struct TextureDescriptorAllocator;
 extern bool foundTex;
 extern std::unique_ptr<uint8_t[]> g_buttonBcDiff_GC;
 extern std::unique_ptr<uint8_t[]> g_buttonBcDiff_PS2;
-const uint32_t RwD3D8RasterExtOffsetAddr = 0x57DD20;
+const uint32_t RwD3D8RasterExtOffsetAddr = 0x632898; // Heroes (Shadow 0x57DD20), xref 7/7
 
 uint64_t NextGuestTextureGeneration();
 //we need to copy the palette data so we can convert properly when copy texture in the GPU

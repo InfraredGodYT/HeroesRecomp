@@ -235,6 +235,10 @@ def main():
             targets.append((kind, int(val[4:], 16), "%s:%d" % (f[len("HeroesRecomp/"):], line), hint))
         elif kind == "memory":
             targets.append((kind, int(val, 16), "%s:%d" % (f[len("HeroesRecomp/"):], line), hint))
+        elif kind == "const":
+            # A named constant: a function start is matched like a call, anything else like data.
+            a = int(val, 16)
+            targets.append(("call" if a in sx.funcset else "memory", a, "%s:%d" % (f[len("HeroesRecomp/"):], line), hint))
     cfg = open("HeroesRecompLib/config/shadow/recompConfig.toml", encoding="utf-8").read()
     for blk in re.findall(r"\[\[midasm_hook\]\](.*?)(?=\n\[|\Z)", cfg, re.S):
         nm = re.search(r'name\s*=\s*"(\w+)"', blk)

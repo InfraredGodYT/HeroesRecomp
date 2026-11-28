@@ -505,30 +505,45 @@ static void DrawShadowImage()
 		fade *= 1.0f - std::clamp(float(ImGui::GetTime() - g_bgFadeOutStart) / BG_FADE_OUT_DURATION, 0.0f, 1.0f);
 	}
 
-	float borderPixels = 32.f; // Options BG has an extra black border at the bottom, we don't want that.
-	float uvMaxY = 1.0f - (borderPixels / 512.0f);
-
 	ImVec2 centre = { res.x / 2.0f, res.y / 2.0f };
 	ImVec2 Min = { centre.x - centre.x, centre.y - centre.y };
 	ImVec2 Max = { centre.x + centre.x, centre.y + centre.y  };
 
+	// Heroes: keep the artwork's proportions ("cover"): fill the window and trim whatever overflows,
+	// centred, instead of stretching the texture to the window shape. Shadow's art also had a 32px
+	// black border at the bottom to crop; ours doesn't.
+	ImVec2 uvMin = { 0, 0 };
+	ImVec2 uvMax = { 1, 1 };
+	auto* tex = g_upTexInstallBG.get();
+	if (tex && tex->width && tex->height && res.x > 0 && res.y > 0)
+	{
+		float texAspect = float(tex->width) / float(tex->height);
+		float winAspect = res.x / res.y;
+		if (winAspect > texAspect) // window wider than the art: use the full width, trim top and bottom
+		{
+			float visible = texAspect / winAspect;
+			uvMin.y = (1.0f - visible) * 0.5f;
+			uvMax.y = uvMin.y + visible;
+		}
+		else // window narrower: use the full height, trim left and right
+		{
+			float visible = winAspect / texAspect;
+			uvMin.x = (1.0f - visible) * 0.5f;
+			uvMax.x = uvMin.x + visible;
+		}
+	}
+
 	drawList->AddImage
 	(
-		g_upTexInstallBG.get(),
+		tex,
 		Min,
 		Max,
-		{ 0, 0 },
-		{ 1, uvMaxY },
+		uvMin,
+		uvMax,
 		IM_COL32(255, 255, 255, (int)(255 * fade))
 	);
 
-
-	// draw fire and white lines under the menu box
-	drawList->PushClipRect(Min, Max, true);
-	DrawAnimatedFire(Min, Max, fade);
-	DrawLoopLines(Min, Max, fade);
-
-	drawList->PopClipRect();
+	// Heroes: Shadow's animated fire and white loop lines (DrawAnimatedFire / DrawLoopLines) are not drawn.
 }
 
 

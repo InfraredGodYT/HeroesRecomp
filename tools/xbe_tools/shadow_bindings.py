@@ -18,6 +18,8 @@ SHARED = "out/build/heroes-local/HeroesRecompLib/x86/x86_recomp_shared.h"
 
 ovr = re.compile(r"\b(X86_OVERRIDE_FUNC|GUEST_FUNCTION_HOOK\w*|GUEST_FUNCTION_STUB)\(\s*(__imp__\w+|sub_[0-9A-F]+)\s*(?:,\s*(\w+))?")
 sub = re.compile(r"\b(?:__imp__)?(sub_[0-9A-F]{4,})\b")
+SHADOW_IMAGE = (0x11000, 0x6908C0)          # Shadow default.xbe: .text start .. image end
+NOT_ADDRESSES = {0x200000}                  # sizes that happen to fall in that range (installer buffer)
 mem = re.compile(r"X86_(LOAD|STORE)_\w+\(\s*(0x[0-9A-Fa-f]{4,})|GuestVariable<[^>]*>\s+(\w+)\s*\{\s*(0x[0-9A-Fa-f]+)")
 
 
@@ -75,10 +77,20 @@ def collect():
                         continue
                     seen.add(s)
                     rows.append((p, i, "call", s, comment, "SILENT: Heroes has " + s if s in heroes else ""))
+                used = set()
                 for m in mem.finditer(code):
                     addr = m.group(2) or m.group(4)
+                    used.add(int(addr, 16))
                     what = (m.group(1) or "var " + m.group(3)).lower()
                     rows.append((p, i, "memory", addr, what + (" | " + comment if comment else ""), "SILENT"))
+                # Any other hex literal inside Shadow's image (named constants, `case` labels, comparisons):
+                # most are guest addresses kept in a variable first, which the patterns above don't see.
+                if not s.startswith("#define"):
+                    for m in re.finditer(r"\b0x([0-9A-Fa-f]{5,6})\b", code):
+                        v = int(m.group(1), 16)
+                        if SHADOW_IMAGE[0] <= v < SHADOW_IMAGE[1] and v not in used and v not in NOT_ADDRESSES:
+                            nm = re.search(r"(\w+)\s*=\s*0x" + m.group(1), code)
+                            rows.append((p, i, "const", "0x%X" % v, (nm.group(1) if nm else code.strip()[:40]), "SILENT"))
     rows.sort()
     return rows
 

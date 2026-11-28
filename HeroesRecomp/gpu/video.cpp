@@ -54,12 +54,12 @@
 #include <user/achievement_manager.h>
 #include "pipeline.h"
 
-const uint32_t GuestDevicePtrAddr = 0x3E0A18;
-const uint32_t GuestDeviceMemAddr = 0x3E0A20;
+const uint32_t GuestDevicePtrAddr = 0x33BC38; // Heroes (Shadow 0x3E0A18), match_shadow xref 83/83
+const uint32_t GuestDeviceMemAddr = 0x33BC40; // Heroes (Shadow 0x3E0A20), xref 8/8
 const uint32_t PresentMemAddr = 0x55F718;
 const uint32_t AutoDepthStencilFormat = 0x57DD68;
-const uint32_t g_DeferredTextureStateAddr = 0x3E0580;
-const uint32_t g_RenderStateAddr = 0x3E0780;
+const uint32_t g_DeferredTextureStateAddr = 0x33B7A0; // Heroes (Shadow 0x3E0580), xref 7/7
+const uint32_t g_RenderStateAddr = 0x33B9A0; // Heroes (Shadow 0x3E0780), xref 11/11
 const uint32_t g_cameraAddr = 0x540C40;
 
 #define DepthStencilFormat RenderFormat::D32_FLOAT
