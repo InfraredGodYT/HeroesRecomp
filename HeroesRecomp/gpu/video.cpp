@@ -1935,6 +1935,7 @@ static void CreateImGuiBackend()
 	io.IniFilename = nullptr;
 	io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;
 	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+	io.ConfigInputTrickleEventQueue = false;
 
 #ifdef ENABLE_IM_FONT_ATLAS_SNAPSHOT
 	IM_DELETE(io.Fonts);
