@@ -241,6 +241,10 @@ function_hooks = [
 	0x340B9B, # DirectSoundCreate_r (Shadow sub_3E5A27) audio/audio.cpp
 	0x3800A5, # input (Shadow sub_4248A6) input/input.cpp
 	0x380118, # input (Shadow sub_424919) input/input.cpp
+	0x276C91, # AllocateHeap_r / RtlCreateHeap (Shadow sub_2ABFCB) kernel/heap.cpp, Ghidra-verified
+	0x2770B5, # RtlAllocateHeap (Shadow sub_2AC3EF) kernel/heap.cpp, Ghidra-verified
+	0x277830, # FreeBlock (Shadow sub_2ACB6A) kernel/heap.cpp, Ghidra-verified
+	0x277A24, # RtlReAllocateHeap (Shadow sub_2ACD5E) kernel/heap.cpp, Ghidra-verified
 ]
 
 # functions: functions discovery missed, as { address = 0x..., size = 0x... }.

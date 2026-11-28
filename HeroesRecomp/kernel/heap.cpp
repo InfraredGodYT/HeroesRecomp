@@ -183,18 +183,22 @@ int XAPILIB_VirtualFree_r(int baseAddr, int size, int allocType)
 }
 
 //create heap
-#if 0 // HEROES-TODO: Shadow address(es) sub_2ABFCB, sub_2AC3EF, sub_2ACD5E, sub_2ADA9A not matched in Heroes yet (docs/shadow-matches.md)
-GUEST_FUNCTION_HOOK(sub_2ABFCB, AllocateHeap_r);
+// Heroes: RtlCreateHeap/RtlAllocateHeap/RtlReAllocateHeap/FreeBlock confirmed in Ghidra 2026-11-28: same decompiled
+// body as Shadow's (same size, same SEH frame 0x68/0x5c). Shadow -> Heroes: 2ABFCB->276C91, 2AC3EF->2770B5,
+// 2ACD5E->277A24, 2ACB6A->277830. Without the RtlCreateHeap hook the original heap code runs and crashes at
+// startup (writes through a null heap base: the host's NtAllocateVirtualMemory doesn't serve it).
+GUEST_FUNCTION_HOOK(sub_276C91, AllocateHeap_r);
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_2AC3EF, RtlAllocateHeap);
-GUEST_FUNCTION_HOOK_STDCALL(sub_2ACD5E, RtlReAllocateHeap); //will get called by realloc too
+GUEST_FUNCTION_HOOK_STDCALL(sub_2770B5, RtlAllocateHeap);
+GUEST_FUNCTION_HOOK_STDCALL(sub_277A24, RtlReAllocateHeap); //will get called by realloc too
+#if 0 // HEROES-TODO: Heroes doesn't link XAPI VirtualAlloc (Shadow sub_2ADA9A); every NtAllocateVirtualMemory caller is heap-internal
 GUEST_FUNCTION_HOOK_STDCALL(sub_2ADA9A, XAPILIB_VirtualAlloc_r);
 #endif // HEROES-TODO
 
 //GUEST_FUNCTION_HOOK(sub_37E229, free_r);
 GUEST_FUNCTION_HOOK_STDCALL(sub_27A035, XAPILIB_XMemFree_r);
-#if 0 // HEROES-TODO: Shadow address(es) sub_2ACB6A, sub_2ADAC8 not matched in Heroes yet (docs/shadow-matches.md)
-GUEST_FUNCTION_HOOK_STDCALL(sub_2ACB6A, FreeBlock);
+GUEST_FUNCTION_HOOK_STDCALL(sub_277830, FreeBlock);
+#if 0 // HEROES-TODO: Heroes doesn't link XAPI VirtualFree (Shadow sub_2ADAC8); every NtFreeVirtualMemory caller is heap-internal
 GUEST_FUNCTION_HOOK_STDCALL(sub_2ADAC8, XAPILIB_VirtualFree_r);
 #endif // HEROES-TODO
 
