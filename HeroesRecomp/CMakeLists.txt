@@ -27,6 +27,20 @@ function(BIN2C)
         set(BIN2C_ARGS_COMPRESSION_TYPE "none")
     endif()
 
+    # Heroes: a file at the same path under RESOURCES_LOCAL_PATH (gitignored) replaces the repo's file.
+    # For your own builds only (e.g. third-party art/music); see tools/branding/make_branding.ps1.
+    # Re-run CMake configure after adding or removing local files.
+    if(DEFINED RESOURCES_LOCAL_PATH AND DEFINED RESOURCES_SOURCE_PATH)
+        string(FIND "${BIN2C_ARGS_SOURCE_FILE}" "${RESOURCES_SOURCE_PATH}/" _res_prefix)
+        if(_res_prefix EQUAL 0)
+            file(RELATIVE_PATH _res_rel "${RESOURCES_SOURCE_PATH}" "${BIN2C_ARGS_SOURCE_FILE}")
+            if(EXISTS "${RESOURCES_LOCAL_PATH}/${_res_rel}")
+                message(STATUS "Local resource override: ${_res_rel}")
+                set(BIN2C_ARGS_SOURCE_FILE "${RESOURCES_LOCAL_PATH}/${_res_rel}")
+            endif()
+        endif()
+    endif()
+
     add_custom_command(OUTPUT "${BIN2C_ARGS_DEST_FILE}.c"
         COMMAND $<TARGET_FILE:file_to_c> "${BIN2C_ARGS_SOURCE_FILE}" "${BIN2C_ARGS_ARRAY_NAME}" "${BIN2C_ARGS_COMPRESSION_TYPE}" "${BIN2C_ARGS_DEST_FILE}.c" "${BIN2C_ARGS_DEST_FILE}.h"
         DEPENDS "${BIN2C_ARGS_SOURCE_FILE}"
@@ -339,6 +353,9 @@ if (WIN32)
 
     # Set Win32 icon path.
     set(WIN32_ICON_PATH "${PROJECT_SOURCE_DIR}/../ShadowRecompResources/images/game_icon.ico")
+    if(EXISTS "${PROJECT_SOURCE_DIR}/../ShadowRecompResources/local/images/game_icon.ico") # Heroes: local override
+        set(WIN32_ICON_PATH "${PROJECT_SOURCE_DIR}/../ShadowRecompResources/local/images/game_icon.ico")
+    endif()
 
     configure_file("res/Win32_/res.rc.template" "${CMAKE_BINARY_DIR}/res.rc" @ONLY)
     add_executable(HeroesRecomp ${HEROES_RECOMP_CXX_SOURCES} "${CMAKE_BINARY_DIR}/res.rc")
@@ -586,6 +603,7 @@ generate_aggregate_header(
 )
 
 set(RESOURCES_SOURCE_PATH "${PROJECT_SOURCE_DIR}/../ShadowRecompResources")
+set(RESOURCES_LOCAL_PATH "${RESOURCES_SOURCE_PATH}/local") # Heroes: gitignored overrides, see BIN2C
 set(RESOURCES_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/res")
 
 ## Miscellaneous ##
@@ -618,7 +636,11 @@ BIN2C(TARGET_OBJ HeroesRecomp SOURCE_FILE "${RESOURCES_SOURCE_PATH}/images/insta
 BIN2C(TARGET_OBJ HeroesRecomp SOURCE_FILE "${RESOURCES_SOURCE_PATH}/images/game_icon.bmp" DEST_FILE "${RESOURCES_OUTPUT_PATH}/images/game_icon.bmp" ARRAY_NAME "g_game_icon")
 
 ## Audio #
-BIN2C(TARGET_OBJ HeroesRecomp SOURCE_FILE "${RESOURCES_SOURCE_PATH}/music/installer.ogg" DEST_FILE "${RESOURCES_OUTPUT_PATH}/music/installer.ogg" ARRAY_NAME "g_installer_music")
+# Heroes: the public resources have no installer music; embed one only if it exists (usually a local override).
+if(EXISTS "${RESOURCES_LOCAL_PATH}/music/installer.ogg" OR EXISTS "${RESOURCES_SOURCE_PATH}/music/installer.ogg")
+    BIN2C(TARGET_OBJ HeroesRecomp SOURCE_FILE "${RESOURCES_SOURCE_PATH}/music/installer.ogg" DEST_FILE "${RESOURCES_OUTPUT_PATH}/music/installer.ogg" ARRAY_NAME "g_installer_music")
+    target_compile_definitions(HeroesRecomp PRIVATE HEROES_RECOMP_INSTALLER_MUSIC)
+endif()
 BIN2C(TARGET_OBJ HeroesRecomp SOURCE_FILE "${RESOURCES_SOURCE_PATH}/sounds/sys_menu_ok.ogg" DEST_FILE "${RESOURCES_OUTPUT_PATH}/sounds/sys_menu_ok.ogg" ARRAY_NAME "g_sys_menu_ok")
 BIN2C(TARGET_OBJ HeroesRecomp SOURCE_FILE "${RESOURCES_SOURCE_PATH}/sounds/sys_menu_cursor.ogg" DEST_FILE "${RESOURCES_OUTPUT_PATH}/sounds/sys_menu_cursor.ogg" ARRAY_NAME "g_sys_menu_cursor")
 BIN2C(TARGET_OBJ HeroesRecomp SOURCE_FILE "${RESOURCES_SOURCE_PATH}/sounds/sys_menu_invalid.ogg" DEST_FILE "${RESOURCES_OUTPUT_PATH}/sounds/sys_menu_invalid.ogg" ARRAY_NAME "g_sys_menu_invalid")

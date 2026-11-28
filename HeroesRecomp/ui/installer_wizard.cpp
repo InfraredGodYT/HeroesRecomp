@@ -1073,7 +1073,7 @@ void InstallerWizard::Draw(X86Context* ctx)
 
 	case WizardPage::InstallSucceeded:
 	{
-		auto foxDev = "FoxWorkshop";
+		auto foxDev = "Heroes Recompiled"; // Heroes: was "FoxWorkshop"; the logo next to it is images/installer/FoxLogo.png
 
 		auto foxSize = font->CalcTextSizeA(descFontSize, FLT_MAX, 0, foxDev);
 		auto foxPositionY = textSize.y + textPosition.y + (25.0f * scale);

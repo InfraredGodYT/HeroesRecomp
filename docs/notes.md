@@ -150,3 +150,29 @@ Tool: `tools/xbe_tools/match_shadow.py` writes `docs/shadow-matches.md`. It has 
   - Shadow's own game code and data, which has no copy in Heroes
   - mid-function hooks inside functions that changed
 - `IDirectSoundBuffer_SetMixBinVolumes` has no slot in Heroes' DSOUND layout (`SetHeadroom` → `Play` is 0x1C apart in Heroes, but 0x38 in Shadow with it in between). Heroes' 5659 DSOUND probably doesn't link it.
+
+## 2026-11-28: Installer branding
+
+The installer used Shadow Recompiled's own branding: an edited official Shadow render as the background, the FoxWorkshop logo and name, and a commissioned fan cover of "Broken" by Kondrashov's Lair (not the original song). It now uses our fork of the resources repo, `InfraredGodYT/HeroesRecompResources` (submodule path still `ShadowRecompResources/`, branch `heroes`).
+
+**Policy, following Shadow Recompiled's precedent (owner's decision, 2026-11-28):**
+- **Official game art, edited or as-is, may go in the public resources** (as Shadow Recompiled does).
+- **Original game music does not.** It stays local-only; only covers or original tracks may be public.
+
+**What it uses now:**
+- **Public:**
+  - the owner's Sonic Heroes wallpaper (background)
+  - the Team Sonic emblem (logo next to "Heroes Recompiled" and the icon)
+  - fitted by `tools/branding/make_branding.ps1`
+- **No installer music in public builds.** Shadow's `installer.ogg` and `installer.wav` were removed. `HEROES_RECOMP_INSTALLER_MUSIC` is only defined when a track exists.
+- **Success screen:** says "Heroes Recompiled". The credits list the port's author, then the Shadow Recompiled team.
+
+**Local overrides for the owner's own builds:**
+- Put files in `ShadowRecompResources/local/` (gitignored in the fork) at the same relative path. `BIN2C` in `HeroesRecomp/CMakeLists.txt` then embeds them instead (configure prints "Local resource override: ..."), and the Win32 `.ico` is taken from there too.
+- In use now: `local/music/installer.ogg` = "What I'm Made Of (Instrumental)", converted from MP3 with ffmpeg (SDL_mixer is built without MP3). Never commit it.
+
+**Still Shadow Recompiled's** (their repo has no license file, so all rights reserved by default; replace with Heroes equivalents before any public release):
+- options-menu backgrounds (`images/common/Options*.png`, `TitleBg.png`)
+- menu sounds (`sounds/sys_menu_*.ogg`)
+- font atlas, button images, achievement and multiplayer-HUD art
+- the animated fire and line effects drawn over the installer background (`DrawAnimatedFire`/`DrawLoopLines` in `installer_wizard.cpp`, code, Shadow-themed)

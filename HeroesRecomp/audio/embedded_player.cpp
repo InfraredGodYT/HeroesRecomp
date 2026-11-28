@@ -3,7 +3,9 @@
 #include <user/config.h>
 #include <ui/game_window.h>
 
+#ifdef HEROES_RECOMP_INSTALLER_MUSIC // Heroes: only embedded when a track exists (see HeroesRecomp/CMakeLists.txt)
 #include <res/music/installer.ogg.h>
+#endif
 #include <res/sounds/sys_menu_ok.ogg.h>
 #include <res/sounds/sys_menu_cancel.ogg.h>
 #include <res/sounds/sys_menu_cursor.ogg.h>
@@ -118,8 +120,10 @@ void EmbeddedPlayer::Init()
     InitMixer();
     g_musicTrack = MIX_CreateTrack(g_mixer);
 
+#ifdef HEROES_RECOMP_INSTALLER_MUSIC
     g_installerMusic = MIX_LoadAudioNoCopy(g_mixer, g_installer_music, sizeof(g_installer_music), false);
     MIX_SetTrackAudio(g_musicTrack, g_installerMusic);
+#endif
     s_isActive = true;
 }
 
@@ -141,6 +145,9 @@ void EmbeddedPlayer::Play(const char* name)
 
 void EmbeddedPlayer::PlayMusic()
 {
+    if (!g_installerMusic) // Heroes: no installer music in this build
+        return;
+
     if (!MIX_TrackPlaying(g_musicTrack))
     {
         auto options = SDL_CreateProperties();
