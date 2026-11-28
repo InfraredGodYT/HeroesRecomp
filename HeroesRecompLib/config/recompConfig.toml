@@ -249,6 +249,37 @@ function_hooks = [
 
 # functions: functions discovery missed, as { address = 0x..., size = 0x... }.
 functions = [
+	# Functions reached only through data pointers (CRT init hooks, math dispatch tables), missed by
+	# discovery. Found 2026-11-28 by comparing Ghidra's function list (tools/ghidra_scripts/ListFunctions.java)
+	# with XboxRecomp2's and scanning data sections for pointers to the difference. Sizes from Ghidra.
+	{ address = 0x27C0B6, size = 0x1 },
+	{ address = 0x27C0EF, size = 0x14 },
+	{ address = 0x2B8350, size = 0x27A },
+	{ address = 0x370E0C, size = 0x9B },
+	{ address = 0x370EA7, size = 0xC0 },
+	{ address = 0x370F67, size = 0x83 },
+	{ address = 0x370FEA, size = 0xC6 },
+	{ address = 0x3710B0, size = 0xC6 },
+	{ address = 0x371176, size = 0xE4 },
+	{ address = 0x37125A, size = 0x127 },
+	{ address = 0x371381, size = 0xD0 },
+	{ address = 0x371451, size = 0x10C },
+	{ address = 0x37155D, size = 0x116 },
+	{ address = 0x371673, size = 0x113 },
+	{ address = 0x371786, size = 0x122 },
+	{ address = 0x372BC1, size = 0xA6 },
+	{ address = 0x372C67, size = 0xD6 },
+	{ address = 0x372D3D, size = 0x83 },
+	{ address = 0x372DC0, size = 0xDC },
+	{ address = 0x372E9C, size = 0xDC },
+	{ address = 0x372F78, size = 0x117 },
+	{ address = 0x37308F, size = 0x175 },
+	{ address = 0x373204, size = 0xE8 },
+	{ address = 0x3732EC, size = 0x151 },
+	{ address = 0x37343D, size = 0x157 },
+	{ address = 0x373594, size = 0x150 },
+	{ address = 0x3736E4, size = 0x154 },
+	{ address = 0x373838, size = 0xE3 },
 ]
 
 # banned_addresses: ranges not to recompile.

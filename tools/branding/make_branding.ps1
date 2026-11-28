@@ -5,11 +5,12 @@ Make the installer/branding images Heroes Recompiled embeds, at the sizes and la
   make_branding.ps1 -Out ShadowRecompResources\local -Background <img> -Logo <img> [-Music <audio>]
 
 Outputs (same paths as in the resources repo; -Out is the repo root or its local\ override folder):
-  images\installer\installer_bg.png   Any shape, longer side <= 1024. The installer fills the window with it,
+  images\installer\installer_bg.png   Any shape, longer side <= 4096. The installer fills the window with it,
                                       keeping its proportions and trimming the overflow (installer_wizard.cpp).
   images\installer\FoxLogo.png        640x512 RGBA. Drawn from the crop (71,17)-(591,499) next to the title text.
   images\game_icon.png/.bmp/.ico      128x128 window/exe icon.
   music\installer.ogg                 only with -Music (converted with ffmpeg, Ogg Vorbis: the mixer has no MP3).
+  sounds\sys_menu_ok.ogg              only with -SelectSound: the menu confirm/select sound (any format ffmpeg reads).
 
 Policy (docs/notes.md, "Installer branding"): like Shadow Recompiled, official game art may go in the public
 resources; original game music may not. Put it in the gitignored local\ folder (-Out ...\local -Music ...).
@@ -19,7 +20,8 @@ param(
     [Parameter(Mandatory)] [string] $Out,
     [string] $Background,
     [string] $Logo,
-    [string] $Music
+    [string] $Music,
+    [string] $SelectSound
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
@@ -58,10 +60,10 @@ function Draw-Circles($g, [float] $cx, [float] $cy, [float] $r) {
 }
 
 # ---- installer background: kept at its own proportions (the installer fills the window and trims the
-# overflow), downscaled so the longer side is at most 1024 px.
+# overflow), downscaled only if the longer side is over 4096 px (4K art stays 4K).
 if ($Background) {
     $img = [System.Drawing.Image]::FromFile((Resolve-Path $Background))
-    $s = [Math]::Min(1.0, 1024.0 / [Math]::Max($img.Width, $img.Height))
+    $s = [Math]::Min(1.0, 4096.0 / [Math]::Max($img.Width, $img.Height))
     $bmp, $g = New-Canvas ([int][Math]::Round($img.Width * $s)) ([int][Math]::Round($img.Height * $s))
     $g.DrawImage($img, 0, 0, $bmp.Width, $bmp.Height)
     $img.Dispose()
@@ -108,6 +110,14 @@ $w.Write([byte]128); $w.Write([byte]128); $w.Write([byte]0); $w.Write([byte]0) #
 $w.Write([uint16]1); $w.Write([uint16]32); $w.Write([uint32]$pngBytes.Length); $w.Write([uint32]22)
 $w.Write($pngBytes); $w.Flush()
 [System.IO.File]::WriteAllBytes((Join-Path $Out 'images\game_icon.ico'), $ms.ToArray())
+
+# ---- menu select/confirm sound (optional)
+if ($SelectSound) {
+    $dst = Join-Path $Out 'sounds\sys_menu_ok.ogg'
+    New-Item -ItemType Directory -Force (Split-Path $dst) | Out-Null
+    & ffmpeg -hide_banner -loglevel error -y -i $SelectSound -vn -c:a libvorbis -q:a 6 $dst
+    if ($LASTEXITCODE -ne 0) { throw "ffmpeg failed" }
+}
 
 # ---- music (optional)
 if ($Music) {

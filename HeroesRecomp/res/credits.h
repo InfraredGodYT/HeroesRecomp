@@ -2,9 +2,10 @@
 
 // Shown by the installer after "Credits: ", joined with ",  ".
 // Heroes: the port's author first, then the Shadow Recompiled team this project is built on.
-inline std::array<const char*, 17> g_credits =
+inline std::array<const char*, 18> g_credits =
 {
     "InfraredGodYT",
+    "Reckoman12 (installer art)",
     "Shadow Recompiled: Sora",
     "dreamsyntax",
     "Sewer56",

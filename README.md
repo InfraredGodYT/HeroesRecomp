@@ -33,6 +33,8 @@ GPL-3.0, like Shadow Recompiled. See [LICENSE](LICENSE).
 
 - [InfraredGodYT](https://github.com/InfraredGodYT): Heroes port.
 
+- Reckoman12: Sonic Heroes artwork used as the installer background.
+
 ### Based on Shadow Recompiled
 
 Heroes Recompiled is built on the work of the Shadow Recompiled team. The following credits are theirs, kept as they wrote them:

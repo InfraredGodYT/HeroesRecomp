@@ -203,3 +203,17 @@ The installer used Shadow Recompiled's own branding: an edited official Shadow r
 - **Installer:**
   - **Background:** the owner's square Sonic Heroes artwork (free to use, no credit required). It's drawn keeping its proportions ("cover": fill the window, trim the overflow) instead of stretched, with no 32 px crop.
   - **Effects:** Shadow's animated fire and loop lines are no longer drawn; their functions are left in place, unused.
+
+## 2026-11-28: Third crash, functions missing from discovery
+
+- **Crash 3:** a jump to host address 0. The C runtime init `sub_27B2EB` calls the pointer at `.data:0x53A768`, which is `0x27C0EF` (the CRT floating-point init hook). XboxRecomp2 had no function there, so the lookup returned null.
+- **General fix: compare with Ghidra.**
+  - `tools/ghidra_scripts/ListFunctions.java` exports Ghidra's 20,272 functions with sizes.
+  - Of the 83 that XboxRecomp2 lacks, **28 are pointed to from data sections**: the CRT init hooks plus a block at `0x370E0C`–`0x373838` reached through function-pointer tables at `0x544180`–`0x544400` (likely the CRT math dispatch).
+  - All 28 are now in `[fixes] functions` with Ghidra's sizes. Discovery from known entry points went 2,417 → 2,490.
+  - Note: XBE `.data` has the executable flag (`0x7`), so "skip executable sections" is the wrong filter. Filter by section name.
+- **Branding:**
+  - The installer background is now Reckoman12's 4K artwork (3840×2160), credited in the README and the installer credits.
+  - The menu confirm sound (`sounds/sys_menu_ok.ogg`, Shadow's gunshot) is now Heroes' menu-select sound (owner's file, converted with ffmpeg).
+  - Game sound effects follow the art policy: public is OK, like Shadow Recompiled's. Only music stays local.
+  - The cursor, cancel and invalid sounds are still Shadow's.
