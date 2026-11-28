@@ -140,6 +140,7 @@ void _XbSubmitNodeMidAsmHook(X86Context& __restrict ctx, uint8_t* base)
 
 //this is needed so weighted characters have proper textures / material color, and lighting.
 // no push function used here, so we just copy constants.
+#if 0 // HEROES-TODO: reads Shadow RenderWare globals (0x55B3C0..CC); only used by the disabled sub_2C51C0 hook
 void _rpSkinXboxSetMaterialColor(int32_t a1addr, int32_t a2)
 {
 	intptr_t a1 = (intptr_t)g_memory.Translate(a1addr);
@@ -196,6 +197,7 @@ void _rpSkinXboxSetMaterialColor(int32_t a1addr, int32_t a2)
 
 	CopyVertexShaderConstant(COLOR_CONST, (DWORD*)g_VSConstants, 1);
 }
+#endif // HEROES-TODO
 
 
 // Begin and End push are essentially command system like DX12, this can be used for many things including draw.
@@ -218,7 +220,9 @@ void D3DDevice_EndPush(DWORD* pPush)
 }
 
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D4740, D3DDevice_BeginPush);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D4760, D3DDevice_EndPush);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32FA00, D3DDevice_BeginPush);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32FA20, D3DDevice_EndPush);
 
+#if 0 // HEROES-TODO: Shadow address(es) sub_2C51C0 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK(sub_2C51C0, _rpSkinXboxSetMaterialColor);
+#endif // HEROES-TODO

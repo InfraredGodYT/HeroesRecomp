@@ -53,6 +53,7 @@ X_STREAMINPUT* get_Xbox_SetStreamSource(uint8_t id)
 
 
 //CreateVertexBuffer (left over debugging)
+#if 0 // HEROES-TODO: Shadow address(es) sub_2E6750 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2E6750);
 X86_OVERRIDE_FUNC(sub_2E6750)
 {
@@ -64,10 +65,12 @@ X86_OVERRIDE_FUNC(sub_2E6750)
 	//printf("Create VB %x - size: %d\n", (intptr_t)buffer, size);
 	//g_VBList.push_back({ buffer, nullptr, size });
 }
+#endif // HEROES-TODO
 
 //CreateAndGetVertexBuffer
 // As explained above, RW has its own dynamic pool for dynamc Vertex Buffer,
 // Those cannot be cached, so grab them here for upload later.
+#if 0 // HEROES-TODO: Shadow address(es) sub_2E67D0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2E67D0);
 X86_OVERRIDE_FUNC(sub_2E67D0)
 {
@@ -77,6 +80,7 @@ X86_OVERRIDE_FUNC(sub_2E67D0)
 	if (resource)
 		g_dynamicVertexBuffers.insert((GuestBuffer*)(base + resource));
 }
+#endif // HEROES-TODO
 
 bool IsDynamicVertexBuffer(GuestBuffer* buffer)
 {
@@ -85,8 +89,8 @@ bool IsDynamicVertexBuffer(GuestBuffer* buffer)
 
 
 //LockVertexBuffer(X_D3DResource* buffer, ...)
-X86_FUNC_IMPL(__imp__sub_3D5FE0);
-X86_OVERRIDE_FUNC(sub_3D5FE0)
+X86_FUNC_IMPL(__imp__sub_3312A0);
+X86_OVERRIDE_FUNC(sub_3312A0)
 {
 	// The locked buffer's content may be overwritten, so drop only its
 	// remembered hashes. All other buffers keep theirs.
@@ -94,12 +98,12 @@ X86_OVERRIDE_FUNC(sub_3D5FE0)
 	if (resource)
 		g_vbTrustedHashes.erase((GuestBuffer*)(base + resource));
 
-	__imp__sub_3D5FE0(ctx, base);
+	__imp__sub_3312A0(ctx, base);
 }
 
 //SetStreamSource
-X86_FUNC_IMPL(__imp__sub_3D1E10);
-X86_OVERRIDE_FUNC(sub_3D1E10) {
+X86_FUNC_IMPL(__imp__sub_32D0E0);
+X86_OVERRIDE_FUNC(sub_32D0E0) {
 
 	auto StreamNumber = (uint32_t)GetHostParameter(ctx, 1);
 	auto buffer = (GuestBuffer*)GetHostParameter(ctx, 2, CallConvention::Stdcall, ParameterType::Pointer);
@@ -109,7 +113,7 @@ X86_OVERRIDE_FUNC(sub_3D1E10) {
 	g_Xbox_SetStreamSource[StreamNumber].Stride = stride;
 
 	//we need to let the original code run otherwise this preven't other vertex buffer to be used
-	__imp__sub_3D1E10(ctx, base);
+	__imp__sub_32D0E0(ctx, base);
 }
 
 

@@ -3,6 +3,7 @@
 
 
 //some error print function
+#if 0 // HEROES-TODO: Shadow address(es) sub_32EFE0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_32EFE0);
 X86_OVERRIDE_FUNC(sub_32EFE0)
 {
@@ -11,8 +12,10 @@ X86_OVERRIDE_FUNC(sub_32EFE0)
 
 	__imp__sub_32EFE0(ctx, base);
 }
+#endif // HEROES-TODO
 
 
+#if 0 // HEROES-TODO: Shadow address(es) sub_11430, sub_578B0, sub_28AF30 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_11430);
 X86_OVERRIDE_FUNC(sub_11430)
 {
@@ -35,3 +38,4 @@ X86_OVERRIDE_FUNC(sub_28AF30)
 	LOGN_UTILITY("....ADVERTISE...");
 	__imp__sub_28AF30(ctx, base);
 }
+#endif // HEROES-TODO

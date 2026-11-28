@@ -120,8 +120,8 @@ static bool IsEventTrack(const std::string& name)
 }
 
 // TObjBGM::Play
-X86_FUNC_IMPL(__imp__sub_25CBB0);
-X86_OVERRIDE_FUNC(sub_25CBB0)
+X86_FUNC_IMPL(__imp__sub_153A0);
+X86_OVERRIDE_FUNC(sub_153A0)
 {
 	if (g_isStartingEventAudio)
 	{
@@ -130,7 +130,7 @@ X86_OVERRIDE_FUNC(sub_25CBB0)
 		std::lock_guard<std::mutex> lock(g_eventTracksMutex);
 		g_eventTracks.emplace(name, strnlen(name, BGM_NAME_SIZE));
 	}
-	__imp__sub_25CBB0(ctx, base);
+	__imp__sub_153A0(ctx, base);
 }
 
 void AudioShutDown()

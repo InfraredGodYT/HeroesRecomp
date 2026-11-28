@@ -414,7 +414,9 @@ int main(int argc, char* argv[])
     PausePatchesInit();
     ModLoader::ApplyHelperPatches();
     BloomConfigValueChangedCallback(&Config::BloomIntensity);
+#if 0 // HEROES-TODO: Shadow's Discord presence (reads Shadow variables; Discord app ID is ShadowRecomp's)
     RichPresence::ShadowRpc::Start();
+#endif // HEROES-TODO
 
     //launch the Start function of the game
     isHostThread = true;

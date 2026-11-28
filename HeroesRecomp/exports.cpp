@@ -6,6 +6,7 @@
 
 uint32_t IsndSeInstance = 0;
 
+#if 0 // HEROES-TODO: Shadow address(es) sub_55A80 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_55A80);
 X86_OVERRIDE_FUNC(sub_55A80)
 {
@@ -14,6 +15,7 @@ X86_OVERRIDE_FUNC(sub_55A80)
 
      IsndSeInstance = ctx.eax.u32;
 }
+#endif // HEROES-TODO
 enum class GameSoundID
 {
     Cursor = 0xE002,
@@ -39,12 +41,14 @@ void Game_PlaySound(X86Context* ctx, const char* pName)
     }
     else
     {
+#if 0 // HEROES-TODO: plays through Shadow's sound engine (sub_25BF80 is an unrelated function in Heroes)
         auto it = g_GameSoundMap.find(pName); // example of game using play sound: 0x292DAC
         if (it != g_GameSoundMap.end())
         {
             GameSoundID id = it->second;
             GuestToHostFunction<void, CallConvention::Thiscall>(*ctx, sub_25BF80, IsndSeInstance, id, 0, 0);
         }
+#endif // HEROES-TODO
 
     }
 

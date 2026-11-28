@@ -17,4 +17,4 @@ void DestructResource(GuestResource* resource)
 	AddDestructResource(resource);
 }
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D5DB0, DestructResource);
+GUEST_FUNCTION_HOOK_STDCALL(sub_331070, DestructResource);

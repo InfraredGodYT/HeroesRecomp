@@ -133,11 +133,13 @@ static void BeginPauseHudHide()
 	auto base = g_memory.base;
 
 	// skip this for MaxHUDWidth so the preview still renders the hud
+#if 0 // HEROES-TODO: Shadow HUD flag (0x54DE78)
 	if (!g_livePreviewHudHidden && IsLivePreviewActive() && g_optionCurrent != &Config::MaxHUDWidth && X86_LOAD_U8(0x54DE78) != 0)
 	{
 		ToggleHud(false);
 		g_livePreviewHudHidden = true;
 	}
+#endif // HEROES-TODO
 }
 
 // small transition for options that hide the background
@@ -1374,6 +1376,7 @@ void OptionsMenu::UpdateSoundTest(X86Context& ctx)
 	if (request == soundTestRequestNone)
 		return;
 
+#if 0 // HEROES-TODO: Shadow BGM/sound-effect functions and track table
 	auto base = g_memory.base;
 
 	// stop the current song, then play the requested track
@@ -1387,6 +1390,7 @@ void OptionsMenu::UpdateSoundTest(X86Context& ctx)
 		auto soundEffects = GuestToHostFunction<uint32_t>(ctx, sub_55B40);
 		GuestToHostFunction<void, CallConvention::Thiscall>(ctx, sub_25BE10, soundEffects, fileName);
 	}
+#endif // HEROES-TODO
 }
 
 static void DrawSoundTestTrack(int rowIndex, ImVec2 min, ImVec2 max)

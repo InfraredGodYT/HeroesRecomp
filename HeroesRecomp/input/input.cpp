@@ -951,13 +951,17 @@ HANDLE XInputOpen(int* a1, int a2)
 
 	for (int i = 0; i < 4; i++)
 	{
+#if 0 // HEROES-TODO: Shadow's controller-port table (0x559984)
 		X86_STORE_U32(0x559984 + (4 * i), i + 1);
+#endif // HEROES-TODO
 	}
 
 	return 0;
 }
 
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_4248A6, input::GetState);
-GUEST_FUNCTION_HOOK_STDCALL(sub_424919, input::SetState);
+GUEST_FUNCTION_HOOK_STDCALL(sub_3800A5, input::GetState);
+GUEST_FUNCTION_HOOK_STDCALL(sub_380118, input::SetState);
+#if 0 // HEROES-TODO: Shadow address(es) sub_2AAC20 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_2AAC20, XInputOpen);
+#endif // HEROES-TODO

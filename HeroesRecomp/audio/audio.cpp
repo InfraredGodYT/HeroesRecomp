@@ -374,6 +374,7 @@ void AudioConfigValueChangedCallback(X86Context* ctx, IConfigDef* config)
 	if (config == &Config::VoiceLanguage)
 	{
 		auto base = g_memory.base;
+#if 0 // HEROES-TODO: Shadow's voice-language switch (Shadow sound functions and variables); Heroes' equivalent unknown
 		GuestToHostFunction<void>(*ctx, sub_25C750); // stop all sound
 
 		const uint32_t newVoiceLang = (uint32_t)Config::VoiceLanguage.Value;
@@ -403,41 +404,48 @@ void AudioConfigValueChangedCallback(X86Context* ctx, IConfigDef* config)
 			}
 		}
 		X86_STORE_U32(0x51DD80, newVoiceLang);
+#endif // HEROES-TODO
 	}
 }
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E5A27, DirectSoundCreate_r);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E5756, IDirectSound_CreateSoundBuffer);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4EE9, IDirectSoundBuffer_SetBufferData);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E421C, IDirectSoundBuffer_GetStatus);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4274, IDirectSoundBuffer_Lock);
+GUEST_FUNCTION_HOOK_STDCALL(sub_340B9B, DirectSoundCreate_r);
+GUEST_FUNCTION_HOOK_STDCALL(sub_3408CA, IDirectSound_CreateSoundBuffer);
+GUEST_FUNCTION_HOOK_STDCALL(sub_34005D, IDirectSoundBuffer_SetBufferData);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F390, IDirectSoundBuffer_GetStatus);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F3E8, IDirectSoundBuffer_Lock);
+#if 0 // HEROES-TODO: Shadow address(es) sub_3E34B8 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_3E34B8, IDirectSoundBuffer_Unlock);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E35B5, CDirectSound_DownloadEffectsImage);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4238, IDirectSoundBuffer_GetCurrentPosition);
+#endif // HEROES-TODO
+GUEST_FUNCTION_HOOK_STDCALL(sub_33E7D5, CDirectSound_DownloadEffectsImage);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F3AC, IDirectSoundBuffer_GetCurrentPosition);
+#if 0 // HEROES-TODO: Shadow address(es) sub_3E4258 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_3E4258, IDirectSoundBuffer_SetCurrentPosition);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E419C, IDirectSoundBuffer_Play);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E41C0, IDirectSoundBuffer_Stop);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E41D8, IDirectSoundBuffer_StopEx);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E34BD, IDirectSoundBuffer_Release);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E412C, IDirectSoundBuffer_SetVolume);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E41FC, IDirectSoundBuffer_SetLoopRegion);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4148, IDirectSoundBuffer_SetPitch);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4164, IDirectSoundBuffer_SetHeadroom);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E48FA, IDirectSoundBuffer_SetFrequency);
+#endif // HEROES-TODO
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F310, IDirectSoundBuffer_Play);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F334, IDirectSoundBuffer_Stop);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F34C, IDirectSoundBuffer_StopEx);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33E6DD, IDirectSoundBuffer_Release);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F2BC, IDirectSoundBuffer_SetVolume);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F370, IDirectSoundBuffer_SetLoopRegion);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F2D8, IDirectSoundBuffer_SetPitch);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33F2F4, IDirectSoundBuffer_SetHeadroom);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33FA6E, IDirectSoundBuffer_SetFrequency);
 
 //3D Sound
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E497A, IDirectSoundBuffer_SetMinDistance);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33FAEE, IDirectSoundBuffer_SetMinDistance);
+#if 0 // HEROES-TODO: Shadow address(es) sub_3E4180 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_3E4180, IDirectSoundBuffer_SetMixBinVolumes_8);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4916, IDirectSoundBuffer_SetMixBins);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4956, IDirectSoundBuffer_SetMaxDistance);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4932, IDirectSoundBuffer_SetConeAngles);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E499E, IDirectSoundBuffer_SetPosition);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E577A, IDirectSound_SetAllParameters);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E5861, IDirectSound_SetI3DL2Listener);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E579A, IDirectSound_SetDistanceFactor);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E583D, IDirectSound_SetRolloffFactor);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E5808, IDirectSound_SetPosition);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E57BE, IDirectSound_SetOrientation);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E52DC, IDirectSound_CommitDeferredSettings);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3E4FB4, CDirectSound_CommitDeferredSettings);
+#endif // HEROES-TODO
+GUEST_FUNCTION_HOOK_STDCALL(sub_33FA8A, IDirectSoundBuffer_SetMixBins);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33FACA, IDirectSoundBuffer_SetMaxDistance);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33FAA6, IDirectSoundBuffer_SetConeAngles);
+GUEST_FUNCTION_HOOK_STDCALL(sub_33FB12, IDirectSoundBuffer_SetPosition);
+GUEST_FUNCTION_HOOK_STDCALL(sub_3408EE, IDirectSound_SetAllParameters);
+GUEST_FUNCTION_HOOK_STDCALL(sub_3409D5, IDirectSound_SetI3DL2Listener);
+GUEST_FUNCTION_HOOK_STDCALL(sub_34090E, IDirectSound_SetDistanceFactor);
+GUEST_FUNCTION_HOOK_STDCALL(sub_3409B1, IDirectSound_SetRolloffFactor);
+GUEST_FUNCTION_HOOK_STDCALL(sub_34097C, IDirectSound_SetPosition);
+GUEST_FUNCTION_HOOK_STDCALL(sub_340932, IDirectSound_SetOrientation);
+GUEST_FUNCTION_HOOK_STDCALL(sub_340450, IDirectSound_CommitDeferredSettings);
+GUEST_FUNCTION_HOOK_STDCALL(sub_340128, CDirectSound_CommitDeferredSettings);
 

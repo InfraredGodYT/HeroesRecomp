@@ -1951,7 +1951,9 @@ static void CreateImGuiBackend()
 
 	AchievementMenu::Init();
 	AchievementOverlay::Init();
+#if 0 // HEROES-TODO: Shadow's multiplayer HUD
 	MultiplayerHud::Init();
+#endif // HEROES-TODO
 
 
 	InitImGuiUtils();
@@ -3315,7 +3317,9 @@ static void DrawImGui(X86Context* ctx)
 
 	ResetImGuiCallbacks();
 
+#if 0 // HEROES-TODO: Shadow's multiplayer HUD (reads Shadow memory every frame)
 	MultiplayerHud::Draw();
+#endif // HEROES-TODO
 	DrawPauseText(ctx);
 
 	AchievementMenu::Draw(ctx);
@@ -3557,6 +3561,7 @@ void Video::EndGameThreadProfiler()
 // and do a hacky method to fix that.
 static thread_local bool isPresentIntervalOne = true;
 //rwD3D8RasterShowRaster (used to Present)
+#if 0 // HEROES-TODO: Shadow address(es) sub_2DDC00 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2DDC00);
 X86_OVERRIDE_FUNC(sub_2DDC00)
 {
@@ -3564,6 +3569,7 @@ X86_OVERRIDE_FUNC(sub_2DDC00)
 	__imp__sub_2DDC00(ctx, base);
 	isPresentIntervalOne = true;
 }
+#endif // HEROES-TODO
 
 void Video::Present(X86Context* ctx)
 {
@@ -4160,12 +4166,12 @@ static GuestSurface* GetSurfaceLevel(GuestTexture* texture, int32_t level, X_D3D
 	return surface;
 }
 
-X86_FUNC_IMPL(__imp__sub_3DA010);
+X86_FUNC_IMPL(__imp__sub_3352D0);
 //CreateSurfaceLevel = "view" or "interface" to access ONE specific level/slice of a texture resource.
 GuestSurface* CreateSurfaceOfTexture(X86Context& ctx, X_D3DFORMAT Format, uint32_t size, GuestBaseTexture* pParent, int32_t pvData)
 {
 	auto base = g_memory.base;
-	__imp__sub_3DA010(ctx, base);
+	__imp__sub_3352D0(ctx, base);
 	ctx.esp.u32 -= 20;
 
 	auto gSurface = (X_D3DSurface*)g_memory.Translate(ctx.eax.u32);
@@ -4326,7 +4332,7 @@ void SetResolution(int adapter, unsigned int a2, uint32_t a3)
 }
 
 
-X86_FUNC_IMPL(__imp__sub_3DDAB0); //CreateDevice
+X86_FUNC_IMPL(__imp__sub_338CD0); //CreateDevice
 
 int32_t Direct3D_CreateDevice_r(X86Context& ctx, int32_t Adapter, int32_t DeviceType, int32_t hFocusWindow, char Flags, X_D3DPRESENT_PARAMETERS* pPresentationParameters, uint32_t* device)
 {
@@ -4371,7 +4377,7 @@ int32_t Direct3D_CreateDevice_r(X86Context& ctx, int32_t Adapter, int32_t Device
 	InitGuestRenderStatePointer((uint32_t*)(base + g_RenderStateAddr));
 	BuildRenderStateMappingTable();
 
-	__imp__sub_3DDAB0(ctx, base);
+	__imp__sub_338CD0(ctx, base);
 	ctx.esp.u32 -= 28; //readjust esp because of calling original function
 
 	return 0; //success
@@ -4922,6 +4928,7 @@ static void ReplaceDeviceSurface(uint32_t device, uint32_t offset, GuestSurface*
 
 //D3D8::CDevice_InitializeFrameBuffers 
 // (this function create backbuffer and stencil)
+#if 0 // HEROES-TODO: Shadow address(es) sub_3D5140 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_3D5140);
 X86_OVERRIDE_FUNC(sub_3D5140)
 {
@@ -4939,6 +4946,7 @@ X86_OVERRIDE_FUNC(sub_3D5140)
 		ReplaceDeviceSurface(device, GuestDeviceAutoDepthOffset, g_defaultStencil);
 	}
 }
+#endif // HEROES-TODO
 
 // The main thread and the loading thread can both run SetRenderTarget at the same time, thus, they can read
 // the same old surface and release it twice, so memory can get corrupted, let's mutex this as a fix.
@@ -4946,7 +4954,7 @@ static std::recursive_mutex g_guestRefCountMutex;
 
 //Specify where it should draws (Either framebuffer surface or texture surface)
 //on DX8 Xbox, SetDepthStencilSurface is merged with SetRenderTarget.
-X86_FUNC_IMPL(__imp__sub_3D0040);
+X86_FUNC_IMPL(__imp__sub_32B2D0);
 void D3DDevice_SetRenderTarget(X86Context& ctx, GuestSurface* surface, GuestSurface* pNewZStencil)
 {
 	std::lock_guard lock(g_guestRefCountMutex);
@@ -4957,7 +4965,7 @@ void D3DDevice_SetRenderTarget(X86Context& ctx, GuestSurface* surface, GuestSurf
 	GuestSurface* newSurface = surface;
 	GuestSurface* newDepthStencil = pNewZStencil;
 
-	__imp__sub_3D0040(ctx, base);
+	__imp__sub_32B2D0(ctx, base);
 	ctx.SubEsp(3);
 
 	// The game calls this function with no depth buffer for render target composites.
@@ -5042,13 +5050,13 @@ static void ProcSetDepthStencilSurface(const RenderCommand& cmd)
 	SetDirtyValue(g_dirtyStates.pipelineState, g_pipelineState.depthStencilFormat, args.depthStencil != nullptr ? args.depthStencil->format : RenderFormat::UNKNOWN);
 }
 
-X86_FUNC_IMPL(__imp__sub_3D0680);
+X86_FUNC_IMPL(__imp__sub_32B910);
 void D3DDevice_SetViewport(X86Context& ctx, GuestViewport* viewport)
 {
 
 	//call original func first
 	auto base = g_memory.base;
-	__imp__sub_3D0680(ctx, base);
+	__imp__sub_32B910(ctx, base);
 	ctx.esp.u32 -= 8;
 
 	if (viewport == nullptr) //they can call this with a null viewport for some reason
@@ -5203,15 +5211,15 @@ void D3DDevice_Clear(uint32_t count, _D3DRECT* pRects, uint32_t flags, uint32_t 
 }
 
 //D3DDevice_SetTransform
-X86_FUNC_IMPL(__imp__sub_3CFCD0);
-X86_OVERRIDE_FUNC(sub_3CFCD0)
+X86_FUNC_IMPL(__imp__sub_32AF60);
+X86_OVERRIDE_FUNC(sub_32AF60)
 {
 	X_D3DTRANSFORMSTATETYPE State = (X_D3DTRANSFORMSTATETYPE)X86_LOAD_U32(ctx.esp.u32 + 4);
 	auto matrixAddr = X86_LOAD_U32(ctx.esp.u32 + 8);
 	D3DMATRIX* pMatrix = (D3DMATRIX*)g_memory.Translate(matrixAddr);
 
 	//we let the original code run first (todo check if that's needed)
-	__imp__sub_3CFCD0(ctx, base);
+	__imp__sub_32AF60(ctx, base);
 
 	if (memcmp(&g_Transforms[State], pMatrix, sizeof(*pMatrix)) == 0)
 		return;
@@ -6392,14 +6400,14 @@ static void ProcSetPixelShaderConstants(const RenderCommand& cmd)
 
 
 //D3DResource_Release
-X86_FUNC_IMPL(__imp__sub_3D5F10);
-X86_OVERRIDE_FUNC(sub_3D5F10)
+X86_FUNC_IMPL(__imp__sub_3311D0);
+X86_OVERRIDE_FUNC(sub_3311D0)
 {
 	auto resource = X86_LOAD_U32(ctx.esp.u32 + 4);
 	if (resource)
 	{
 		std::lock_guard lock(g_guestRefCountMutex);
-		__imp__sub_3D5F10(ctx, base);
+		__imp__sub_3311D0(ctx, base);
 	}
 	else
 	{
@@ -6408,8 +6416,8 @@ X86_OVERRIDE_FUNC(sub_3D5F10)
 }
 
 //Free Vertex Buffer
-X86_FUNC_IMPL(__imp__sub_2E6140);
-X86_OVERRIDE_FUNC(sub_2E6140)
+X86_FUNC_IMPL(__imp__sub_2B2000);
+X86_OVERRIDE_FUNC(sub_2B2000)
 {
 	auto resource = X86_LOAD_U32(ctx.esp.u32 + 4);
 	if (resource)
@@ -6428,10 +6436,11 @@ X86_OVERRIDE_FUNC(sub_2E6140)
 		}
 	}
 
-	__imp__sub_2E6140(ctx, base);
+	__imp__sub_2B2000(ctx, base);
 }
 
 //CreateStandAloneSurface
+#if 0 // HEROES-TODO: Shadow address(es) sub_3DA0A0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_3DA0A0);
 X86_OVERRIDE_FUNC(sub_3DA0A0)
 {
@@ -6461,6 +6470,7 @@ X86_OVERRIDE_FUNC(sub_3DA0A0)
 
 	ctx.esp.u32 += 4;
 }
+#endif // HEROES-TODO
 
 // Stubbed DX8 functions
 
@@ -6700,31 +6710,35 @@ static std::thread g_renderThread([]
 	});
 
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_3DDAB0, Direct3D_CreateDevice_r);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3DD950, SetResolution);
+GUEST_FUNCTION_HOOK_STDCALL(sub_338CD0, Direct3D_CreateDevice_r);
+GUEST_FUNCTION_HOOK_STDCALL(sub_338B70, SetResolution);
 
 //Resource
-GUEST_FUNCTION_HOOK_STDCALL(sub_3DA010, CreateSurfaceOfTexture);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D0040, D3DDevice_SetRenderTarget);
+GUEST_FUNCTION_HOOK_STDCALL(sub_3352D0, CreateSurfaceOfTexture);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32B2D0, D3DDevice_SetRenderTarget);
 
 //Rendering
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D0680, D3DDevice_SetViewport);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D6BF0, D3DDevice_Clear);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3DC1F0, DrawIndexedPrimitive);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32B910, D3DDevice_SetViewport);
+GUEST_FUNCTION_HOOK_STDCALL(sub_331EB0, D3DDevice_Clear);
+GUEST_FUNCTION_HOOK_STDCALL(sub_3374B0, DrawIndexedPrimitive);
+#if 0 // HEROES-TODO: Shadow address(es) sub_3DC150 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_3DC150, DrawPrimitive);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3DBFE0, DrawPrimitiveUP);
+#endif // HEROES-TODO
+GUEST_FUNCTION_HOOK_STDCALL(sub_3372A0, DrawPrimitiveUP);
+#if 0 // HEROES-TODO: Shadow address(es) sub_3DD560 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_3DD560, D3DDevice_Swap); //Present
+#endif // HEROES-TODO
 
 // Misc
 
 // adx and fmv decoding requires vblank signal
-GUEST_FUNCTION_HOOK(sub_3CFE70, CRI_BlockUntilVerticalBlank);
+GUEST_FUNCTION_HOOK(sub_32B100, CRI_BlockUntilVerticalBlank);
 
 //			==== STUB  ====
-GUEST_FUNCTION_HOOK(sub_3D3240, D3D_CommonSetDebugRegisters);
-GUEST_FUNCTION_HOOK(sub_3D0F10, D3Device_IsBusy);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D4720, D3DDevice_IsFencePending);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D5F60, D3DResource_BlockUntilNotBusy);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D4950, D3D_BlockOnTime);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3DD8B0, D3D_GetAdapterModeCount);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D0F40, D3D_SetTileNoWait);
+GUEST_FUNCTION_HOOK(sub_32E510, D3D_CommonSetDebugRegisters);
+GUEST_FUNCTION_HOOK(sub_32C1A0, D3Device_IsBusy);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32F9E0, D3DDevice_IsFencePending);
+GUEST_FUNCTION_HOOK_STDCALL(sub_331220, D3DResource_BlockUntilNotBusy);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32FC10, D3D_BlockOnTime);
+GUEST_FUNCTION_HOOK_STDCALL(sub_338AD0, D3D_GetAdapterModeCount);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32C210, D3D_SetTileNoWait);

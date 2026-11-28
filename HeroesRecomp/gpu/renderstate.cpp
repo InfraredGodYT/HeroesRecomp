@@ -373,4 +373,4 @@ void InitGuestRenderStatePointer(uint32_t* ptr)
 
 
 
-GUEST_FUNCTION_HOOK_FASTCALL(sub_3D2420, D3DDevice_SetRenderState_Simple);
+GUEST_FUNCTION_HOOK_FASTCALL(sub_32D6F0, D3DDevice_SetRenderState_Simple);

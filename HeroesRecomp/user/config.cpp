@@ -837,8 +837,10 @@ void Config::CreateCallbacks()
             MainThreadDispatcher::Get().Post([value]()
                 {
                     auto base = g_memory.base;
+#if 0 // HEROES-TODO: Shadow's language variables (0x54DD88, 0x541504)
                     X86_STORE_U32(0x54DD88, value);
                     X86_STORE_U32(0x541504, value);
+#endif // HEROES-TODO
                 });
         };
 

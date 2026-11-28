@@ -320,6 +320,7 @@ Achievement GetAchievement(ELanguage language, const uint8_t id)
 // Library has 326 ending, this is checked with index 0-325
 bool IsLibrarySequenceUnlocked(int index)
 {
+#if 0 // HEROES-TODO: Shadow save data (0x549640)
 	auto base = g_memory.base;
     auto ptr = X86_LOAD_U32(0x549640);
 
@@ -334,6 +335,9 @@ bool IsLibrarySequenceUnlocked(int index)
     // ecx = ebx = count (index)
     //	ctx.eflags.update_test_flags_U32(X86_LOAD_U32(ctx.edx.u32 + ctx.ecx.u32 * 0x4 + 0x16d0) & ctx.eax.u32);
     return (bit & word) != 0;
+#else
+	return false;
+#endif // HEROES-TODO
 }
 
 //  this match the route map order so far
@@ -342,6 +346,7 @@ bool IsLibrarySequenceUnlocked(int index)
 // 5 = neutral hero ending
 bool IsEndingUnlocked(uint16_t flag)
 {
+#if 0 // HEROES-TODO: Shadow save data (0x549640)
     auto base = g_memory.base;
     auto ptr = X86_LOAD_U32(0x549640);
 
@@ -360,6 +365,9 @@ bool IsEndingUnlocked(uint16_t flag)
     }
 
     return false;
+#else
+	return false;
+#endif // HEROES-TODO
 }
 
 void SetEndingAchievementMidAsmHook(X86Context& __restrict ctx, uint8_t* base)
@@ -386,6 +394,7 @@ void UpdateARankCountMidAsmHook(X86Context& __restrict ctx, uint8_t* base)
 // dword_54DDDC is the index used per stage as an offset to browse the save data
 // it starts at 5 in westopolis and increase following level internal order skipping bosses.
 // thus, digital circuit which is the second internal stage will be 6, glyphic canyon will be 7 etc.
+#if 0 // HEROES-TODO: Shadow address(es) sub_1B2C30 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_1B2C30);
 X86_OVERRIDE_FUNC(sub_1B2C30)
 {
@@ -419,6 +428,7 @@ X86_OVERRIDE_FUNC(sub_1B2C30)
         AchievementManager::SaveBinary();
     }
 }
+#endif // HEROES-TODO
 
 const uint32_t g_menuModeAddr = 0x5022A4;
 const uint32_t g_stageActionModeAddr = 0x5496C0;
@@ -456,6 +466,7 @@ void StageActionGoalActionMidAsmHook(X86Context& __restrict ctx, uint8_t* base)
 
 // Ending achievement check
 // the route table at 0x4EB160 contains the boss node of each ending (10 entries). 
+#if 0 // HEROES-TODO: Shadow address(es) sub_2378B0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2378B0);
 X86_OVERRIDE_FUNC(sub_2378B0)
 {
@@ -497,6 +508,7 @@ X86_OVERRIDE_FUNC(sub_2378B0)
         return;
     }
 }
+#endif // HEROES-TODO
 
 
 // Memo: State / Behavior 27 is DriveVehicle
@@ -524,6 +536,7 @@ bool IsAnyPlayerDriving()
 
 // Lethal Highway tank (BKTank::SetBKTank) Exec sub_1D0C40 calls this
 // with 0 when HP drops to 50 and with 1 once when HP hits 0
+#if 0 // HEROES-TODO: Shadow address(es) sub_1D0900 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_1D0900);
 X86_OVERRIDE_FUNC(sub_1D0900)
 {
@@ -536,3 +549,4 @@ X86_OVERRIDE_FUNC(sub_1D0900)
         AchievementManager::SaveBinary();
     }
 }
+#endif // HEROES-TODO

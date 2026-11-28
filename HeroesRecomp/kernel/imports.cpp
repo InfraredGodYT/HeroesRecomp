@@ -1322,10 +1322,10 @@ uint8_t* g_nv2aPtr = nullptr;
 // Because the game stores hardware address directly as a pointer, we have to swap it to our nv2a array that handle basic hardware stuff. 
 // We need to do that because we have to simulate vblank call since these are needed for the game to progress normally
 // Thus, whenever the game will write a vblank signal in our array, we can check that and simulate the wait properly.
-X86_FUNC_IMPL(__imp__sub_3D7B81);
-X86_OVERRIDE_FUNC(sub_3D7B81)
+X86_FUNC_IMPL(__imp__sub_332E41);
+X86_OVERRIDE_FUNC(sub_332E41)
 {
-	__imp__sub_3D7B81(ctx, base);
+	__imp__sub_332E41(ctx, base);
 	X86_STORE_U32(ctx.ecx.u32, g_memory.MapVirtual(g_nv2aPtr)); //this will make the game write hardware value in our array directly.
 }
 
@@ -1340,7 +1340,9 @@ GUEST_FUNCTION_HOOK_STDCALL(__imp__NtQueryVirtualMemory, NtQueryVirtualMemory);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__RtlRaiseException, RtlRaiseException_);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__MmPersistContiguousMemory, MmPersistContiguousMemory);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__MmAllocateContiguousMemory, MmAllocateContiguousMemory);
+#if 0 // HEROES-TODO: kernel import Heroes doesn't import
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtQueryFullAttributesFile, NtQueryFullAttributesFile);
+#endif // HEROES-TODO
 GUEST_FUNCTION_HOOK_STDCALL(__imp__RtlInitAnsiString, RtlInitAnsiString);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtOpenFile, NtOpenFile);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtClose, NtClose);
@@ -1363,7 +1365,9 @@ GUEST_FUNCTION_HOOK_STDCALL(__imp__KeQueryBasePriorityThread, KeQueryBasePriorit
 GUEST_FUNCTION_HOOK_STDCALL(__imp__KeSetDisableBoostThread, KeSetDisableBoostThread);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtResumeThread, NtResumeThread);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtSuspendThread, NtSuspendThread);
+#if 0 // HEROES-TODO: kernel import Heroes doesn't import
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtYieldExecution, NtYieldExecution);
+#endif // HEROES-TODO
 GUEST_FUNCTION_HOOK_STDCALL(__imp__PsTerminateSystemThread, PsTerminateSystemThread);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtWaitForSingleObject, NtWaitForSingleObject);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtReadFile, NtReadFile);
@@ -1383,9 +1387,13 @@ GUEST_FUNCTION_HOOK_STDCALL(__imp__IoCreateSymbolicLink, IoCreateSymbolicLink);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__IoDeleteSymbolicLink, IoDeleteSymbolicLink);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtQuerySymbolicLinkObject, NtQuerySymbolicLinkObject);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__NtOpenSymbolicLinkObject, NtOpenSymbolicLinkObject);
+#if 0 // HEROES-TODO: kernel import Heroes doesn't import
 GUEST_FUNCTION_HOOK_STDCALL(__imp__MmFreeSystemMemory, MmFreeSystemMemory);
+#endif // HEROES-TODO
 
+#if 0 // HEROES-TODO: kernel import Heroes doesn't import
 GUEST_FUNCTION_HOOK_STDCALL(__imp__MmAllocateSystemMemory, MmAllocateSystemMemory);
+#endif // HEROES-TODO
 GUEST_FUNCTION_HOOK_FASTCALL(__imp__KfLowerIrql, KfLowerIrql);
 
 GUEST_FUNCTION_HOOK_STDCALL(__imp__KeRaiseIrqlToDpcLevel, KeRaiseIrqlToDpcLevel);
@@ -1439,7 +1447,11 @@ GUEST_FUNCTION_HOOK_STDCALL(__imp__AvSetDisplayMode, AvSetDisplayMode);
 GUEST_FUNCTION_HOOK_STDCALL(__imp__AvSendTVEncoderOption, AvSendTVEncoderOption);
 GUEST_FUNCTION_HOOK(__imp__DbgPrint, DbgPrint);
 
+#if 0 // HEROES-TODO: Shadow address(es) sub_2ADB04 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK(sub_2ADB04, XGetLanguage);
+#endif // HEROES-TODO
 
 //XAutoPowerDownResetTimer
+#if 0 // HEROES-TODO: Shadow address(es) sub_2B17E8 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_STUB(sub_2B17E8);
+#endif // HEROES-TODO

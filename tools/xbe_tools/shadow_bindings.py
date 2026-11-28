@@ -26,6 +26,10 @@ def collect():
     heroes = set()
     if os.path.exists("HeroesRecompLib/private/heroes_funcs.txt"):
         heroes = set(open("HeroesRecompLib/private/heroes_funcs.txt").read().split())
+    # Ported: Heroes addresses listed in [fixes] function_hooks. Their sub_ names in the host are Heroes', not Shadow's.
+    cfg = open("HeroesRecompLib/config/recompConfig.toml", encoding="utf-8").read()
+    hooks_block = re.search(r"function_hooks\s*=\s*\[(.*?)\]", cfg, re.S)
+    ported = {"sub_%X" % int(a, 16) for a in re.findall(r"^\s*0x([0-9A-Fa-f]+)", hooks_block.group(1), re.M)} if hooks_block else set()
     imports = None
     if os.path.exists(SHARED):
         imports = set(re.findall(r"X86_OVERRIDE_ALLOWED___imp__(\w+)", open(SHARED, encoding="utf-8", errors="replace").read()))
@@ -37,7 +41,18 @@ def collect():
             if not p.endswith((".cpp", ".h", ".inl")) or p.startswith(SKIP):
                 continue
             lines = open(p, encoding="utf-8", errors="replace").read().splitlines()
+            skip = 0  # depth inside `#if 0` (disabled code, e.g. HEROES-TODO blocks)
             for i, line in enumerate(lines, 1):
+                s = line.strip()
+                if skip:
+                    if s.startswith("#if"):
+                        skip += 1
+                    elif s.startswith("#endif"):
+                        skip -= 1
+                    continue
+                if re.match(r"#if\s+0\b", s):
+                    skip = 1
+                    continue
                 code = line.split("//")[0]
                 comment = line.split("//", 1)[1].strip() if "//" in line else ""
                 seen = set()
@@ -48,13 +63,15 @@ def collect():
                             rows.append((p, i, "import", target[7:], "not imported by Heroes", ""))
                         continue
                     seen.add(target)
+                    if target in ported:
+                        continue
                     if not name:  # name from a comment just above the override, if any
                         prev = lines[i - 2].strip() if i > 1 else ""
                         name = prev[2:].strip() if prev.startswith("//") else ""
                     rows.append((p, i, "override", target, name, "COLLIDES" if target in heroes else ""))
                 for m in sub.finditer(code):
                     s = m.group(1)
-                    if s in seen or (("X86_FUNC_IMPL" in code) and "__imp__" + s in code):
+                    if s in seen or s in ported or (("X86_FUNC_IMPL" in code) and "__imp__" + s in code):
                         continue
                     seen.add(s)
                     rows.append((p, i, "call", s, comment, "SILENT: Heroes has " + s if s in heroes else ""))

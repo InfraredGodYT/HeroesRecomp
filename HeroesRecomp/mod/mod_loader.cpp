@@ -703,6 +703,7 @@ static void LoadColorsIni(const fs::path& iniPath, const std::string& modName)
 
 // Player effect spawn
 // Jump and trail aura use this function
+#if 0 // HEROES-TODO: Shadow address(es) sub_8D1B0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_8D1B0);
 X86_OVERRIDE_FUNC(sub_8D1B0)
 {
@@ -714,9 +715,11 @@ X86_OVERRIDE_FUNC(sub_8D1B0)
 	__imp__sub_8D1B0(ctx, base);
 	g_curJumpBallID = backupID;
 }
+#endif // HEROES-TODO
 
 // EffectObject ctor
 // Memo: second param is the EFD: +0 = name, +0x38 = color A R G B.
+#if 0 // HEROES-TODO: Shadow address(es) sub_38F810 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_38F810);
 X86_OVERRIDE_FUNC(sub_38F810)
 {
@@ -755,6 +758,7 @@ X86_OVERRIDE_FUNC(sub_38F810)
 	X86_STORE_U32(this_ + 264, (*g_jumpBallColors[curCharID])[1] << 22);
 	X86_STORE_U32(this_ + 268, (*g_jumpBallColors[curCharID])[2] << 22);
 }
+#endif // HEROES-TODO
 
 void SetSpinTrailColors()
 {
@@ -972,6 +976,7 @@ static std::vector<const ModArchiveWorker*> FindAppendedFiles(const std::string&
 }
 
 // TOneFile::LoadOneFileAsync
+#if 0 // HEROES-TODO: Shadow address(es) sub_1F7F0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_1F7F0);
 X86_OVERRIDE_FUNC(sub_1F7F0)
 {
@@ -983,6 +988,7 @@ X86_OVERRIDE_FUNC(sub_1F7F0)
 
 	__imp__sub_1F7F0(ctx, base);
 }
+#endif // HEROES-TODO
 
 // Memo: table record has the uncompressed size at +44, data pointer at +48 and flags at +52.
 static std::shared_ptr<const std::vector<uint8_t>> MergeAppendedTxd(const std::string& archive, uint32_t record, const ModArchiveWorker* replaceWK, const std::vector<const ModArchiveWorker*>& appends)
@@ -1041,6 +1047,7 @@ static std::shared_ptr<const std::vector<uint8_t>> MergeAppendedTxd(const std::s
 // the game will then later use this size for allocating memory properly. (This table fix up runs for both normal and
 // async loads.)
 // later on a separate function we patch the file loading function to load the replacement file instead of the original one.
+#if 0 // HEROES-TODO: Shadow address(es) sub_1F360 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_1F360);
 X86_OVERRIDE_FUNC(sub_1F360)
 {
@@ -1098,10 +1105,12 @@ X86_OVERRIDE_FUNC(sub_1F360)
 	else
 		g_oneFileReplacements[oneFileAddr] = std::move(replacements);
 }
+#endif // HEROES-TODO
 
 // TOneFile::OpenData
 // Now that we patched the asset table size, we can load the replacement file
 // instead of the original one.
+#if 0 // HEROES-TODO: Shadow address(es) sub_1F570 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_1F570);
 X86_OVERRIDE_FUNC(sub_1F570)
 {
@@ -1158,8 +1167,10 @@ X86_OVERRIDE_FUNC(sub_1F570)
 
 	ctx.AddEsp(5); // we loaded the file ourselves, clean up the stack for the skipped function (4 args + ret addr)
 }
+#endif // HEROES-TODO
 
 // ADXT_StartAf(adxt, partition, entry)
+#if 0 // HEROES-TODO: Shadow address(es) sub_32A9A0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_32A9A0);
 X86_OVERRIDE_FUNC(sub_32A9A0)
 {
@@ -1210,6 +1221,7 @@ X86_OVERRIDE_FUNC(sub_32A9A0)
 	GuestToHostFunction<void>(nameCtx, sub_32A9D0, adxt, nameCtx.esp.u32);
 	ctx.AddEsp(1);
 }
+#endif // HEROES-TODO
 
 // Note this would normally be done by separated code mod (likely through DLL)
 // but we don't have that yet, so until then this is a temp solution since Reloaded is embbedded in the mod loader.

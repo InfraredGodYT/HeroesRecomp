@@ -19,7 +19,9 @@ static std::thread::id g_mainThreadId = std::this_thread::get_id();
 
 static void CloseAndSaveResources()
 {
+#if 0 // HEROES-TODO: Shadow's Discord presence
 	RichPresence::ShadowRpc::Stop();
+#endif // HEROES-TODO
 	Video::Shutdown();
 	AudioShutDown();
 	Config::Save();
@@ -52,6 +54,7 @@ bool App::isInMainMenu() // 7 is library
 bool Window_OnSDLEvent(void*, SDL_Event* event);
 
 //main game loop
+#if 0 // HEROES-TODO: Shadow address(es) sub_57630 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_57630);
 X86_OVERRIDE_FUNC(sub_57630)
 {
@@ -75,8 +78,10 @@ X86_OVERRIDE_FUNC(sub_57630)
 	//std::this_thread::sleep_for(std::chrono::milliseconds(16));
 
 }
+#endif // HEROES-TODO
 
 //init
+#if 0 // HEROES-TODO: Shadow address(es) sub_11AD0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_11AD0);
 X86_OVERRIDE_FUNC(sub_11AD0)
 {
@@ -88,8 +93,10 @@ X86_OVERRIDE_FUNC(sub_11AD0)
 
 	__imp__sub_11AD0(ctx, base);
 }
+#endif // HEROES-TODO
 
 //Set Voice Language
+#if 0 // HEROES-TODO: Shadow address(es) sub_55BE0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_55BE0);
 X86_OVERRIDE_FUNC(sub_55BE0)
 {
@@ -97,6 +104,7 @@ X86_OVERRIDE_FUNC(sub_55BE0)
 
 	X86_STORE_U32(0x54DD8C, (uint32_t)Config::VoiceLanguage.Value);
 }
+#endif // HEROES-TODO
 
 std::atomic<bool> shouldQuit = false; 
 

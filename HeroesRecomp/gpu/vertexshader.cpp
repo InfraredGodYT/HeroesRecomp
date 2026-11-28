@@ -834,11 +834,11 @@ void D3DDevice_SetVertexShaderConstantNotInlineFast(int32_t Register, DWORD* pCo
 }
 
 //SetShaderConstantMode
-X86_FUNC_IMPL(__imp__sub_3D2010);
-X86_OVERRIDE_FUNC(sub_3D2010)
+X86_FUNC_IMPL(__imp__sub_32D2E0);
+X86_OVERRIDE_FUNC(sub_32D2E0)
 {
 	g_Xbox_VertexShaderConstantMode = X86_LOAD_U32(ctx.esp.u32 + 4);
-	__imp__sub_3D2010(ctx, base);
+	__imp__sub_32D2E0(ctx, base);
 }
 
 void SetVertexAttribute(int32_t Register, FLOAT a, FLOAT b, FLOAT c, FLOAT d)
@@ -939,22 +939,22 @@ void UpdateVertexShader(uint32_t Handle)
 
 // DX8 has a fixed pipeline, meaning we won't always have a shader from this function, sometimes it can be FVF too
 // Since DX12 only support Shader, we will use a uber shader to emulate FVF stuff, see FixedFunctionVertexShader.hlsl
-X86_FUNC_IMPL(__imp__sub_3D2280);
+X86_FUNC_IMPL(__imp__sub_32D550);
 static void SetVertexShader(X86Context& ctx, uint32_t Handle)
 {
 	//let original code run first so it will call SelectVertexShader function
 	auto base = g_memory.base;
-	__imp__sub_3D2280(ctx, base);
+	__imp__sub_32D550(ctx, base);
 	ctx.esp.u32 -= 8; //1 arg + ret value*/
 
 	UpdateVertexShader(Handle);
 }
 
 //vertex shader
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D2280, SetVertexShader);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D1F70, SelectVertexShader);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D1F00, LoadVertexShaderProgram);
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D1EA0, LoadVertexShader);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32D550, SetVertexShader);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32D240, SelectVertexShader);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32D1D0, LoadVertexShaderProgram);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32D170, LoadVertexShader);
 
-GUEST_FUNCTION_HOOK_FASTCALL(sub_3D1CE0, D3DDevice_SetVertexShaderConstant1Fast);
-GUEST_FUNCTION_HOOK_FASTCALL(sub_3D1D30, D3DDevice_SetVertexShaderConstantNotInlineFast);
+GUEST_FUNCTION_HOOK_FASTCALL(sub_32CFB0, D3DDevice_SetVertexShaderConstant1Fast);
+GUEST_FUNCTION_HOOK_FASTCALL(sub_32D000, D3DDevice_SetVertexShaderConstantNotInlineFast);

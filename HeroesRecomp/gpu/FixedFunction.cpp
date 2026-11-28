@@ -859,22 +859,22 @@ ShaderVariantKey UpdateFixedFunctionVertexShaderState(size_t Handle, bool isPSFi
 }
 
 //D3DDevice_LightEnable
-X86_FUNC_IMPL(__imp__sub_3D0B70);
-X86_OVERRIDE_FUNC(sub_3D0B70)
+X86_FUNC_IMPL(__imp__sub_32BE00);
+X86_OVERRIDE_FUNC(sub_32BE00)
 {
 	uint32_t Index = GetHostParameter(ctx, 1);
 	uint32_t bEnable = GetHostParameter(ctx, 2);
-	__imp__sub_3D0B70(ctx, base);
+	__imp__sub_32BE00(ctx, base);
 	LightEnable(Index, bEnable);
 }
 
 //D3DDevice_SetLight
-X86_FUNC_IMPL(__imp__sub_3D08B0);
-X86_OVERRIDE_FUNC(sub_3D08B0)
+X86_FUNC_IMPL(__imp__sub_32BB40);
+X86_OVERRIDE_FUNC(sub_32BB40)
 {
 	uint32_t Index = GetHostParameter(ctx, 1);
 	X_D3DLIGHT8* pLight = (X_D3DLIGHT8*)GetHostParameter(ctx, 2, CallConvention::Stdcall, ParameterType::Pointer);
-	__imp__sub_3D08B0(ctx, base);
+	__imp__sub_32BB40(ctx, base);
 	UpdateLightData(Index, pLight);
 }
 
@@ -883,4 +883,4 @@ void SetMaterial(Material* pMaterial)
 	UpdateMaterial(pMaterial);
 }
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_3CFDF0, SetMaterial);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32B080, SetMaterial);

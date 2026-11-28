@@ -205,6 +205,7 @@ void SetPixelShaderConstants(LocalRenderCommandQueue& queue)
 
 
 //SetPixelShaderConstant
+#if 0 // HEROES-TODO: Shadow address(es) sub_3DC790 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_3DC790);
 X86_OVERRIDE_FUNC(sub_3DC790)
 {
@@ -213,15 +214,16 @@ X86_OVERRIDE_FUNC(sub_3DC790)
 	if (UpdatePixelShaderConstant(psh_constants))
 		g_pixelShaderConstantsAnyDirty = true;
 }
+#endif // HEROES-TODO
 
 
 // SetPixelShader
-X86_FUNC_IMPL(__imp__sub_3DC590);
-X86_OVERRIDE_FUNC(sub_3DC590)
+X86_FUNC_IMPL(__imp__sub_337850);
+X86_OVERRIDE_FUNC(sub_337850)
 {
 	auto Handle = X86_LOAD_U32(ctx.esp.u32 + 4);
 
-	__imp__sub_3DC590(ctx, base);
+	__imp__sub_337850(ctx, base);
 
 	RenderCommand cmd;
 	cmd.type = RenderCommandType::SetPixelShader;

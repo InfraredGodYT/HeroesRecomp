@@ -185,6 +185,12 @@ set(HEROES_RECOMP_PATCHES_CXX_SOURCES
     "patches/code_patches.cpp"
 )
 
+# Heroes-only host code (not in upstream ShadowRecomp).
+set(HEROES_RECOMP_HEROES_CXX_SOURCES
+    "heroes/kernel_stubs.cpp"
+    "heroes/patch_stubs.cpp"
+)
+
 
 set(HEROES_RECOMP_USER_CXX_SOURCES
     "user/achievement_data.cpp"
@@ -281,6 +287,7 @@ set(HEROES_RECOMP_CXX_SOURCES
     # Heroes: Shadow's game patches are bound to Shadow's addresses, so they are not built.
     # Kept in patches/ as reference; port and re-add them one at a time.
     # ${HEROES_RECOMP_PATCHES_CXX_SOURCES}
+    ${HEROES_RECOMP_HEROES_CXX_SOURCES}
     ${HEROES_RECOMP_UI_CXX_SOURCES}
     ${HEROES_RECOMP_USER_CXX_SOURCES}
     ${HEROES_RECOMP_MOD_CXX_SOURCES}

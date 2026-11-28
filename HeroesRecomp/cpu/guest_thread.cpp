@@ -382,11 +382,11 @@ int32_t GetThreadPriorityImpl(GuestThreadHandle* hThread)
 #endif
 }
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_2ADC8D, GetThreadPriorityImpl);
+GUEST_FUNCTION_HOOK_STDCALL(sub_27B51F, GetThreadPriorityImpl);
 
-GUEST_FUNCTION_HOOK(sub_2ADF79, XAPILIBGetCurrentThreadId);
+GUEST_FUNCTION_HOOK(sub_27B80A, XAPILIBGetCurrentThreadId);
 
-GUEST_FUNCTION_STUB(sub_2B126A); // Some kernel hardware check, not needed on PC.
+GUEST_FUNCTION_STUB(sub_27B3D0); // Some kernel hardware check, not needed on PC.
 //GUEST_FUNCTION_STUB(sub_381F6C);
 
 //GUEST_FUNCTION_STUB(sub_2B1815); 

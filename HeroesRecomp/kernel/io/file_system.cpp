@@ -570,6 +570,7 @@ int CacheGameFiles(int a1)
 }
 
 // load save data
+#if 0 // HEROES-TODO: Shadow address(es) sub_2A4420 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2A4420);
 X86_OVERRIDE_FUNC(sub_2A4420)
 {
@@ -579,8 +580,10 @@ X86_OVERRIDE_FUNC(sub_2A4420)
 		AchievementManager::SaveBinary();
 	}
 }
+#endif // HEROES-TODO
 
 // XAPILIB::XCreateSaveGame
+#if 0 // HEROES-TODO: Shadow address(es) sub_2AEC9A not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2AEC9A);
 X86_OVERRIDE_FUNC(sub_2AEC9A)
 {
@@ -590,20 +593,29 @@ X86_OVERRIDE_FUNC(sub_2AEC9A)
 		AchievementManager::SaveBinary();
 	}
 }
+#endif // HEROES-TODO
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_2AF653, XCreateFile_r);
-GUEST_FUNCTION_HOOK_STDCALL(sub_2ADFF0, XReadFile_r);
+GUEST_FUNCTION_HOOK_STDCALL(sub_2759AF, XCreateFile_r);
+GUEST_FUNCTION_HOOK_STDCALL(sub_275506, XReadFile_r);
+#if 0 // HEROES-TODO: Shadow address(es) sub_2AE0DD, sub_2AE45E, sub_2AE420 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_2AE0DD, XWriteFile_r);
 GUEST_FUNCTION_HOOK_STDCALL(sub_2AE45E, XGetFileSize_r);
 GUEST_FUNCTION_HOOK_STDCALL(sub_2AE420, XGetFileSizeEx_r);
-GUEST_FUNCTION_HOOK_STDCALL(sub_2AE237, XSetFilePointer_r);
+#endif // HEROES-TODO
+GUEST_FUNCTION_HOOK_STDCALL(sub_27574D, XSetFilePointer_r);
+#if 0 // HEROES-TODO: Shadow address(es) sub_2AE331, sub_2AD93C not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_2AE331, XSetFilePointerEx_r);
 GUEST_FUNCTION_HOOK_STDCALL(sub_2AD93C, XFindFirstFile);
-GUEST_FUNCTION_HOOK_STDCALL(sub_2ADA49, XFindNextFile);
+#endif // HEROES-TODO
+GUEST_FUNCTION_HOOK_STDCALL(sub_27A4AE, XFindNextFile);
 
 // save file stuff (fake U partition)
+#if 0 // HEROES-TODO: Shadow address(es) sub_2AF174, sub_2B04AE not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_2AF174, UserPathExist);
 GUEST_FUNCTION_HOOK_STDCALL(sub_2B04AE, CreateSaveFolder);
+#endif // HEROES-TODO
 
 // stub
+#if 0 // HEROES-TODO: Shadow address(es) sub_332B60 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK(sub_332B60, CacheGameFiles);
+#endif // HEROES-TODO

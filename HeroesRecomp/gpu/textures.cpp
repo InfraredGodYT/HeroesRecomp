@@ -23,10 +23,10 @@ uint64_t NextGuestTextureGeneration();
 static uint32_t* g_currentPaletteData;
 
 //rwD3D8RasterLockPalette
-X86_FUNC_IMPL(__imp__sub_2DF9F0);
-X86_OVERRIDE_FUNC(sub_2DF9F0)
+X86_FUNC_IMPL(__imp__sub_2B6FA0);
+X86_OVERRIDE_FUNC(sub_2B6FA0)
 {
-	__imp__sub_2DF9F0(ctx, base);
+	__imp__sub_2B6FA0(ctx, base);
 	if (ctx.eax.u32 == 1)
 	{
 		auto paletteData = X86_LOAD_U32(ctx.ecx.u32);
@@ -486,6 +486,7 @@ void CopyTextureToGPU(GuestTexture* tex)
 }
 
 // rwD3D8NativeTextureRead
+#if 0 // HEROES-TODO: Shadow address(es) sub_2ED0D0 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2ED0D0);
 X86_OVERRIDE_FUNC(sub_2ED0D0)
 {
@@ -511,6 +512,7 @@ X86_OVERRIDE_FUNC(sub_2ED0D0)
 		foundTex = false;
 	}
 }
+#endif // HEROES-TODO
 
 static void UnlockTextureRect(GuestTexture* texture)
 {
@@ -529,6 +531,7 @@ static void UnlockTextureRect(GuestTexture* texture)
 
 GuestTexture* g_currentTextureRect = nullptr;
 // rwD3D8RasterUnlock
+#if 0 // HEROES-TODO: Shadow address(es) sub_2DF870 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2DF870);
 X86_OVERRIDE_FUNC(sub_2DF870)
 {
@@ -539,8 +542,10 @@ X86_OVERRIDE_FUNC(sub_2DF870)
 	g_currentTextureRect = (GuestTexture*)(base + TexAddr);
 	__imp__sub_2DF870(ctx, base);
 }
+#endif // HEROES-TODO
 
 // XGSwizzleRect - This is the final step where texture are ready for Xbox to use, we can upload safely here. (Used during FMV.)
+#if 0 // HEROES-TODO: Shadow address(es) sub_40B363 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_40B363);
 X86_OVERRIDE_FUNC(sub_40B363)
 {
@@ -562,6 +567,7 @@ X86_OVERRIDE_FUNC(sub_40B363)
 		UnlockTextureRect(g_currentTextureRect);
 	}
 }
+#endif // HEROES-TODO
 
 
 // Always use guest size, a smaller host size overflow the buffer and corrupt memory.
@@ -592,6 +598,7 @@ static GuestTexture* CreateTexture_(uint32_t width, uint32_t height, uint32_t de
 
 
 // CreateTexture
+#if 0 // HEROES-TODO: Shadow address(es) sub_2DFE20 not matched in Heroes yet (docs/shadow-matches.md)
 X86_FUNC_IMPL(__imp__sub_2DFE20);
 X86_OVERRIDE_FUNC(sub_2DFE20)
 {
@@ -622,6 +629,7 @@ X86_OVERRIDE_FUNC(sub_2DFE20)
 		ctx.eax.u32 = g_memory.MapVirtual(newTex);
 	}
 }
+#endif // HEROES-TODO
 
 
 extern GuestTexture* g_texturesPSDef[4];
@@ -639,6 +647,8 @@ void SetTexture(uint32_t stage, GuestTexture* texture)
 	g_pendingRenderCommands.enqueue() = cmd;
 }
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_3D0CD0, SetTexture);
+GUEST_FUNCTION_HOOK_STDCALL(sub_32BF60, SetTexture);
+#if 0 // HEROES-TODO: Shadow address(es) sub_3DD710, sub_3DD810 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_3DD710, CreateTexture_); //not used for 2D stuff at least.
 GUEST_FUNCTION_HOOK_STDCALL(sub_3DD810, LockTextureRect); //todo cube version?
+#endif // HEROES-TODO

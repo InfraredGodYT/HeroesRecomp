@@ -183,15 +183,19 @@ int XAPILIB_VirtualFree_r(int baseAddr, int size, int allocType)
 }
 
 //create heap
+#if 0 // HEROES-TODO: Shadow address(es) sub_2ABFCB, sub_2AC3EF, sub_2ACD5E, sub_2ADA9A not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK(sub_2ABFCB, AllocateHeap_r);
 
 GUEST_FUNCTION_HOOK_STDCALL(sub_2AC3EF, RtlAllocateHeap);
 GUEST_FUNCTION_HOOK_STDCALL(sub_2ACD5E, RtlReAllocateHeap); //will get called by realloc too
 GUEST_FUNCTION_HOOK_STDCALL(sub_2ADA9A, XAPILIB_VirtualAlloc_r);
+#endif // HEROES-TODO
 
 //GUEST_FUNCTION_HOOK(sub_37E229, free_r);
-GUEST_FUNCTION_HOOK_STDCALL(sub_2B0494, XAPILIB_XMemFree_r);
+GUEST_FUNCTION_HOOK_STDCALL(sub_27A035, XAPILIB_XMemFree_r);
+#if 0 // HEROES-TODO: Shadow address(es) sub_2ACB6A, sub_2ADAC8 not matched in Heroes yet (docs/shadow-matches.md)
 GUEST_FUNCTION_HOOK_STDCALL(sub_2ACB6A, FreeBlock);
 GUEST_FUNCTION_HOOK_STDCALL(sub_2ADAC8, XAPILIB_VirtualFree_r);
+#endif // HEROES-TODO
 
-GUEST_FUNCTION_HOOK_STDCALL(sub_2AD48C, RtlFreeHeap);
+GUEST_FUNCTION_HOOK_STDCALL(sub_2781BD, RtlFreeHeap);
